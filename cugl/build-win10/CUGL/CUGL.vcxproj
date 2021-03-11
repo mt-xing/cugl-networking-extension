@@ -73,6 +73,7 @@
     <ClInclude Include="..\..\include\cugl\base\cu_platform.h" />
     <ClInclude Include="..\..\include\cugl\base\platform\CUDisplay-impl.h" />
     <ClInclude Include="..\..\include\cugl\cugl.h" />
+    <ClInclude Include="..\..\include\cugl\CUNetworkConnection.h" />
     <ClInclude Include="..\..\include\cugl\input\CUAccelerometer.h" />
     <ClInclude Include="..\..\include\cugl\input\CUInput.h" />
     <ClInclude Include="..\..\include\cugl\input\CUKeyboard.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="..\..\lib\base\CUApplication.cpp" />
     <ClCompile Include="..\..\lib\base\CUDisplay.cpp" />
     <ClCompile Include="..\..\lib\base\platform\CUDisplay-SDL.cpp" />
+    <ClCompile Include="..\..\lib\CUNetworkConnection.cpp" />
     <ClCompile Include="..\..\lib\input\CUAccelerometer.cpp" />
     <ClCompile Include="..\..\lib\input\CUInput.cpp" />
     <ClCompile Include="..\..\lib\input\CUKeyboard.cpp" />
@@ -448,6 +450,7 @@
       <AdditionalOptions>/IGNORE:4006,4221 %(AdditionalOptions)</AdditionalOptions>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

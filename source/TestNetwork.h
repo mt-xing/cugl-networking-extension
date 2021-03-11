@@ -1,0 +1,15 @@
+#ifndef TEST_NETWORK_H
+#define TEST_NETWORK_H
+
+#include <cugl/CUNetworkConnection.h>
+
+class TestNetwork {
+private:
+	std::shared_ptr<cugl::CUNetworkConnection> net;
+public:
+	TestNetwork();
+
+	void step();
+};
+
+#endif // TEST_NETWORK_H

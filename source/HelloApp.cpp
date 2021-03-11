@@ -54,50 +54,51 @@ using namespace cugl;
  * causing the application to run.
  */
 void HelloApp::onStartup() {
-    Size size = getDisplaySize();
-    size *= GAME_WIDTH/size.width;
-    
-    // Create a scene graph the same size as the window
-    _scene = Scene2::alloc(size.width, size.height);
-    // Create a sprite batch (and background color) to render the scene
-    _batch = SpriteBatch::alloc();
-    setClearColor(Color4(229,229,229,255));
-    
-    // Create an asset manager to load all assets
-    _assets = AssetManager::alloc();
-    
-    // You have to attach the individual loaders for each asset type
-    _assets->attach<Texture>(TextureLoader::alloc()->getHook());
-    _assets->attach<Font>(FontLoader::alloc()->getHook());
-    
-    // This reads the given JSON file and uses it to load all other assets
-    _assets->loadDirectory("json/assets.json");
+	Size size = getDisplaySize();
+	size *= GAME_WIDTH / size.width;
 
-    // Activate mouse or touch screen input as appropriate
-    // We have to do this BEFORE the scene, because the scene has a button
+	// Create a scene graph the same size as the window
+	_scene = Scene2::alloc(size.width, size.height);
+	// Create a sprite batch (and background color) to render the scene
+	_batch = SpriteBatch::alloc();
+	setClearColor(Color4(229, 229, 229, 255));
+
+	// Create an asset manager to load all assets
+	_assets = AssetManager::alloc();
+
+	// You have to attach the individual loaders for each asset type
+	_assets->attach<Texture>(TextureLoader::alloc()->getHook());
+	_assets->attach<Font>(FontLoader::alloc()->getHook());
+
+	// This reads the given JSON file and uses it to load all other assets
+	_assets->loadDirectory("json/assets.json");
+
+	// Activate mouse or touch screen input as appropriate
+	// We have to do this BEFORE the scene, because the scene has a button
 #if defined (CU_TOUCH_SCREEN)
-    Input::activate<Touchscreen>();
+	Input::activate<Touchscreen>();
 #else
-    Input::activate<Mouse>();
+	Input::activate<Mouse>();
 #endif
-    
-    // Build the scene from these assets
-    buildScene();
-    Application::onStartup();
-    
-    // Report the safe area
-    Rect bounds = Display::get()->getSafeBounds();
-    CULog("Safe Area %sx%s",bounds.origin.toString().c_str(),
-                            bounds.size.toString().c_str());
 
-    bounds = getSafeBounds();
-    CULog("Safe Area %sx%s",bounds.origin.toString().c_str(),
-                            bounds.size.toString().c_str());
+	// Build the scene from these assets
+	buildScene();
+	Application::onStartup();
 
-    bounds = getDisplayBounds();
-    CULog("Full Area %sx%s",bounds.origin.toString().c_str(),
-                            bounds.size.toString().c_str());
+	// Report the safe area
+	Rect bounds = Display::get()->getSafeBounds();
+	CULog("Safe Area %sx%s", bounds.origin.toString().c_str(),
+		bounds.size.toString().c_str());
 
+	bounds = getSafeBounds();
+	CULog("Safe Area %sx%s", bounds.origin.toString().c_str(),
+		bounds.size.toString().c_str());
+
+	bounds = getDisplayBounds();
+	CULog("Full Area %sx%s", bounds.origin.toString().c_str(),
+		bounds.size.toString().c_str());
+
+	nn = std::make_shared<TestNetwork>();
 }
 
 /**
@@ -112,19 +113,19 @@ void HelloApp::onStartup() {
  * causing the application to be deleted.
  */
 void HelloApp::onShutdown() {
-    // Delete all smart pointers
-    _logo = nullptr;
-    _scene = nullptr;
-    _batch = nullptr;
-    _assets = nullptr;
-    
-    // Deativate input
+	// Delete all smart pointers
+	_logo = nullptr;
+	_scene = nullptr;
+	_batch = nullptr;
+	_assets = nullptr;
+
+	// Deativate input
 #if defined CU_TOUCH_SCREEN
-    Input::deactivate<Touchscreen>();
+	Input::deactivate<Touchscreen>();
 #else
-    Input::deactivate<Mouse>();
+	Input::deactivate<Mouse>();
 #endif
-    Application::onShutdown();
+	Application::onShutdown();
 }
 
 /**
@@ -139,17 +140,19 @@ void HelloApp::onShutdown() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void HelloApp::update(float timestep) {
-    if (_countdown == 0) {
-        // Move the logo about the screen
-        Size size = getDisplaySize();
-        size *= GAME_WIDTH/size.width;
-		float x = (float)(std::rand() % (int)(size.width/2))+size.width/4;
-		float y = (float)(std::rand() % (int)(size.height/2))+size.height/8;
-        _logo->setPosition(Vec2(x,y));
-        _countdown = TIME_STEP;
-    } else {
-        _countdown--;
-    }
+	nn->step();
+	if (_countdown == 0) {
+		// Move the logo about the screen
+		Size size = getDisplaySize();
+		size *= GAME_WIDTH / size.width;
+		float x = (float)(std::rand() % (int)(size.width / 2)) + size.width / 4;
+		float y = (float)(std::rand() % (int)(size.height / 2)) + size.height / 8;
+		_logo->setPosition(Vec2(x, y));
+		_countdown = TIME_STEP;
+	}
+	else {
+		_countdown--;
+	}
 }
 
 /**
@@ -162,8 +165,8 @@ void HelloApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void HelloApp::draw() {
-    // This takes care of begin/end
-    _scene->render(_batch);
+	// This takes care of begin/end
+	_scene->render(_batch);
 }
 
 /**
@@ -174,62 +177,62 @@ void HelloApp::draw() {
  * have become standard in most game engines.
  */
 void HelloApp::buildScene() {
-    Size  size  = getDisplaySize();
-    float scale = GAME_WIDTH/size.width;
-    size *= scale;
-    
-    // The logo is actually an image+label.  We need a parent node
-    _logo = scene2::SceneNode::alloc();
-    
-    // Get the image and add it to the node.
-    std::shared_ptr<Texture> texture  = _assets->get<Texture>("logo");
-    _logo = scene2::PolygonNode::allocWithTexture(texture);
-    _logo->setScale(0.2f); // Magic number to rescale asset
+	Size  size = getDisplaySize();
+	float scale = GAME_WIDTH / size.width;
+	size *= scale;
 
-    // Put the logo in the middle of the screen
-    _logo->setAnchor(Vec2::ANCHOR_CENTER);
-    _logo->setPosition(size.width/2,size.height/2);
+	// The logo is actually an image+label.  We need a parent node
+	_logo = scene2::SceneNode::alloc();
 
-    
-    // Create a button.  A button has an up image and a down image
-    std::shared_ptr<Texture> up   = _assets->get<Texture>("close-normal");
-    std::shared_ptr<Texture> down = _assets->get<Texture>("close-selected");
-    
-    Size bsize = up->getSize();
-    std::shared_ptr<scene2::Button> button = scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(up),
-                                                                   scene2::PolygonNode::allocWithTexture(down));
-    
-    // Create a callback function for the button
-    button->setName("close");
-    button->addListener([=] (const std::string& name, bool down) {
-        // Only quit when the button is released
-        if (!down) {
-            CULog("Goodbye!");
-            this->quit();
-        }
-    });
-    
-    // Find the safe area, adapting to the iPhone X
-    Rect safe = getSafeBounds();
-    safe.origin *= scale;
-    safe.size   *= scale;
-    
-    // Get the right and bottom offsets.
-    float bOffset = safe.origin.y;
-    float rOffset = (size.width)-(safe.origin.x+safe.size.width);
+	// Get the image and add it to the node.
+	std::shared_ptr<Texture> texture = _assets->get<Texture>("logo");
+	_logo = scene2::PolygonNode::allocWithTexture(texture);
+	_logo->setScale(0.2f); // Magic number to rescale asset
 
-    // Position the button in the bottom right corner
-    button->setAnchor(Vec2::ANCHOR_CENTER);
-    button->setPosition(size.width-(bsize.width+rOffset)/2,(bsize.height+bOffset)/2);
-    
-    // Add the logo and button to the scene graph
-    _scene->addChild(_logo);
-    _scene->addChild(button);
-    
-    // We can only activate a button AFTER it is added to a scene
-    button->activate();
+	// Put the logo in the middle of the screen
+	_logo->setAnchor(Vec2::ANCHOR_CENTER);
+	_logo->setPosition(size.width / 2, size.height / 2);
 
-    // Start the logo countdown and C-style random number generator
-    _countdown = TIME_STEP;
-    std::srand((int)std::time(0));
+
+	// Create a button.  A button has an up image and a down image
+	std::shared_ptr<Texture> up = _assets->get<Texture>("close-normal");
+	std::shared_ptr<Texture> down = _assets->get<Texture>("close-selected");
+
+	Size bsize = up->getSize();
+	std::shared_ptr<scene2::Button> button = scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(up),
+		scene2::PolygonNode::allocWithTexture(down));
+
+	// Create a callback function for the button
+	button->setName("close");
+	button->addListener([=](const std::string& name, bool down) {
+		// Only quit when the button is released
+		if (!down) {
+			CULog("Goodbye!");
+			this->quit();
+		}
+		});
+
+	// Find the safe area, adapting to the iPhone X
+	Rect safe = getSafeBounds();
+	safe.origin *= scale;
+	safe.size *= scale;
+
+	// Get the right and bottom offsets.
+	float bOffset = safe.origin.y;
+	float rOffset = (size.width) - (safe.origin.x + safe.size.width);
+
+	// Position the button in the bottom right corner
+	button->setAnchor(Vec2::ANCHOR_CENTER);
+	button->setPosition(size.width - (bsize.width + rOffset) / 2, (bsize.height + bOffset) / 2);
+
+	// Add the logo and button to the scene graph
+	_scene->addChild(_logo);
+	_scene->addChild(button);
+
+	// We can only activate a button AFTER it is added to a scene
+	button->activate();
+
+	// Start the logo countdown and C-style random number generator
+	_countdown = TIME_STEP;
+	std::srand((int)std::time(0));
 }
