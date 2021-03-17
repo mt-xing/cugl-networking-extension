@@ -58,8 +58,9 @@ namespace cugl {
 		~CUNetworkConnection();
 
 		/**
-		 * Send a byte array to all other players.
-		 * Requires a connection be established.
+		 * Sends a byte array to all other players.
+		 *
+		 * This requires a connection be established. If not, this is a noop.
 		 *
 		 * @param msg The byte array to send.
 		 */
@@ -130,6 +131,7 @@ namespace cugl {
 
 		enum CustomDataPackets {
 			Standard = 0,
+			AssignedRoom,
 			// Request to join, or success
 			JoinRoom,
 			// Couldn't find room

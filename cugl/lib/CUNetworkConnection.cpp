@@ -316,21 +316,6 @@ void CUNetworkConnection::receive(
 			// NOLINTNEXTLINE
 			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
 
-			// TODO remove this
-			if (msgConverted[0] == 100) {
-				if (playerID != 0) {
-					break;
-				}
-				std::stringstream newRoomId;
-				for (size_t i = 0; i < ROOM_LENGTH; i++) {
-					newRoomId << static_cast<char>(message[i + 1]);
-				}
-				connectedPlayers.set(0);
-				roomID = newRoomId.str();
-				CULog("Got room ID: %s", roomID.c_str());
-				break;
-			}
-
 			dispatcher(msgConverted);
 
 			std::visit(make_visitor(
@@ -340,14 +325,33 @@ void CUNetworkConnection::receive(
 			delete[] message; // NOLINT
 			break;
 		}
-		case ID_USER_PACKET_ENUM + JoinRoom: {
-			uint8_t ignored; // NOLINT
+		case ID_USER_PACKET_ENUM + AssignedRoom: {
+			if (playerID != 0) {
+				break;
+			}
+			uint8_t ignored;
 			bts.Read(ignored);
-			uint8_t length; // NOLINT
+			uint8_t length;
 			bts.Read(length);
-			uint8_t* message = new uint8_t[length]; // NOLINT
+			uint8_t* message = new uint8_t[length];
 			bts.ReadAlignedBytes(message, length);
-			// NOLINTNEXTLINE
+			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+			std::stringstream newRoomId;
+			for (size_t i = 0; i < ROOM_LENGTH; i++) {
+				newRoomId << static_cast<char>(msgConverted[i]);
+			}
+			connectedPlayers.set(0);
+			roomID = newRoomId.str();
+			CULog("Got room ID: %s", roomID.c_str());
+			break;
+		}
+		case ID_USER_PACKET_ENUM + JoinRoom: {
+			uint8_t ignored;
+			bts.Read(ignored);
+			uint8_t length;
+			bts.Read(length);
+			uint8_t* message = new uint8_t[length];
+			bts.ReadAlignedBytes(message, length);
 			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
 
 			std::visit(make_visitor(
@@ -372,13 +376,12 @@ void CUNetworkConnection::receive(
 			break;
 		}
 		case ID_USER_PACKET_ENUM + PlayerJoined: {
-			uint8_t ignored; // NOLINT
+			uint8_t ignored;
 			bts.Read(ignored);
-			uint8_t length; // NOLINT
+			uint8_t length;
 			bts.Read(length);
-			uint8_t* message = new uint8_t[length]; // NOLINT
+			uint8_t* message = new uint8_t[length];
 			bts.ReadAlignedBytes(message, length);
-			// NOLINTNEXTLINE
 			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
 
 			std::visit(make_visitor(
@@ -391,13 +394,12 @@ void CUNetworkConnection::receive(
 			break;
 		}
 		case ID_USER_PACKET_ENUM + PlayerLeft: {
-			uint8_t ignored; // NOLINT
+			uint8_t ignored;
 			bts.Read(ignored);
-			uint8_t length; // NOLINT
+			uint8_t length;
 			bts.Read(length);
-			uint8_t* message = new uint8_t[length]; // NOLINT
+			uint8_t* message = new uint8_t[length];
 			bts.ReadAlignedBytes(message, length);
-			// NOLINTNEXTLINE
 			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
 
 			std::visit(make_visitor(
@@ -409,7 +411,7 @@ void CUNetworkConnection::receive(
 			break;
 		}
 		default:
-			CULog("Received unknown message: %d", packet->data[0]); // NOLINT
+			CULog("Received unknown message: %d", packet->data[0]);
 			break;
 		}
 	}
