@@ -3,7 +3,13 @@
 #include <cugl/cugl.h>
 
 TestNetwork::TestNetwork() {
-	net = std::make_shared<cugl::CUNetworkConnection>(cugl::CUNetworkConnection::ConnectionConfig("35.231.212.113", 61111, 2, 0));
+	net = std::make_shared<cugl::CUNetworkConnection>(
+		cugl::CUNetworkConnection::ConnectionConfig(
+			"35.231.212.113",
+			61111,
+			2,
+			0)
+		);
 }
 
 void TestNetwork::step() {
