@@ -117,8 +117,16 @@ namespace cugl {
 			uint32_t maxPlayers;
 			std::vector<std::unique_ptr<SLNet::SystemAddress>> peers;
 
-			HostPeers() : started(false), maxPlayers(6) {};
-			explicit HostPeers(uint32_t max) : started(false), maxPlayers(max) {};
+			HostPeers() : started(false), maxPlayers(6) {
+				for (uint8_t i = 0; i < 5; i++) {
+					peers.push_back(nullptr);
+				}
+			};
+			explicit HostPeers(uint32_t max) : started(false), maxPlayers(max) {
+				for (uint8_t i = 0; i < max - 1; i++) {
+					peers.push_back(nullptr);
+				}
+			};
 		};
 
 		/** Connection to host and room ID for client */

@@ -148,7 +148,7 @@ void CUNetworkConnection::receive(
 				std::visit(make_visitor(
 					[&](HostPeers& h) {
 						CULog("Accepting connections now");
-						peer->SetMaximumIncomingConnections(h.maxPlayers - 1);
+						peer->SetMaximumIncomingConnections(h.maxPlayers);
 					},
 					[&](ClientPeer& c) {
 						CULog("Trying to connect to %s", c.room.c_str());
@@ -420,4 +420,5 @@ void CUNetworkConnection::receive(
 
 void CUNetworkConnection::startGame() {
 	std::visit(make_visitor([&](HostPeers& h) { h.started = true; }, [&](ClientPeer& c) {}), remotePeer);
+	maxPlayers = numPlayers;
 }
