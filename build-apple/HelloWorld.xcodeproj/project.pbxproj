@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		828E67AF2603F8DC00ACA041 /* TestNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67AA2603F8DA00ACA041 /* TestNetwork.cpp */; };
+		828E67B02603F8DC00ACA041 /* TestNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67AA2603F8DA00ACA041 /* TestNetwork.cpp */; };
+		828E67B12603F8DC00ACA041 /* TestNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67AA2603F8DA00ACA041 /* TestNetwork.cpp */; };
 		EB07CFB621EFF3F8000CB3A3 /* DeviceMargins.plist in Resources */ = {isa = PBXBuildFile; fileRef = EB07CFB021EFF3EF000CB3A3 /* DeviceMargins.plist */; };
 		EB22BDE025D0E00A002ACE41 /* libcugl-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB22BDC825D0DE75002ACE41 /* libcugl-mac.a */; };
 		EB22BDFC25D0E0E2002ACE41 /* libcugl-ios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EB22BDCA25D0DE75002ACE41 /* libcugl-ios.a */; };
@@ -102,6 +105,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		828E67AA2603F8DA00ACA041 /* TestNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestNetwork.cpp; sourceTree = "<group>"; };
+		828E67AE2603F8DB00ACA041 /* TestNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestNetwork.h; sourceTree = "<group>"; };
 		EB07CFB021EFF3EF000CB3A3 /* DeviceMargins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DeviceMargins.plist; sourceTree = "<group>"; };
 		EB22BF5E25D0E8BC002ACE41 /* HelloWorld (Sim).app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "HelloWorld (Sim).app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB2BE9B21D74952A002FE78B /* HelloApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HelloApp.cpp; sourceTree = "<group>"; };
@@ -335,6 +340,8 @@
 				EB2BE9B41D74952A002FE78B /* main.cpp */,
 				EB2BE9B31D74952A002FE78B /* HelloApp.h */,
 				EB2BE9B21D74952A002FE78B /* HelloApp.cpp */,
+				828E67AA2603F8DA00ACA041 /* TestNetwork.cpp */,
+				828E67AE2603F8DB00ACA041 /* TestNetwork.h */,
 			);
 			name = Source;
 			path = ../source;
@@ -512,6 +519,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB9CDA3925D0EAB100EE1A09 /* main.cpp in Sources */,
+				828E67B12603F8DC00ACA041 /* TestNetwork.cpp in Sources */,
 				EB9CDA3525D0EAAC00EE1A09 /* HelloApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -521,6 +529,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB7454AE1D74D891002FBAE6 /* main.cpp in Sources */,
+				828E67B02603F8DC00ACA041 /* TestNetwork.cpp in Sources */,
 				EB7454AF1D74D891002FBAE6 /* HelloApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -530,6 +539,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB2BE9B61D74952A002FE78B /* main.cpp in Sources */,
+				828E67AF2603F8DC00ACA041 /* TestNetwork.cpp in Sources */,
 				EB2BE9B51D74952A002FE78B /* HelloApp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -753,6 +763,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.HelloWorld;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -767,6 +778,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Mac-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = edu.cornell.gdiac.mac.HelloWorld;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -35,9 +35,7 @@
 #include <cstdlib>
 #include <ctime>
 
-// This keeps us from having to write cugl:: all the time
 using namespace cugl;
-
 // The number of frames before moving the logo to a new position
 #define TIME_STEP 60
 // This is adjusted by screen aspect ratio to get the height
@@ -54,7 +52,7 @@ using namespace cugl;
  * causing the application to run.
  */
 void HelloApp::onStartup() {
-	Size size = getDisplaySize();
+	cugl::Size size = getDisplaySize();
 	size *= GAME_WIDTH / size.width;
 
 	// Create a scene graph the same size as the window
