@@ -28,6 +28,9 @@ typedef SOCKET socket_t;
 #endif
 #endif
 
+#include <slikenet/peerinterface.h>
+
+
 
 using namespace cugl;
 

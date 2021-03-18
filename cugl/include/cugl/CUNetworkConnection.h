@@ -13,7 +13,10 @@
 #include <slikenet/BitStream.h>
 #include <slikenet/MessageIdentifiers.h>
 #include <slikenet/NatPunchthroughClient.h>
-#include <slikenet/peerinterface.h>
+
+namespace SLNet {
+	class RakPeerInterface;
+}
 
 namespace cugl {
 	class CUNetworkConnection {
