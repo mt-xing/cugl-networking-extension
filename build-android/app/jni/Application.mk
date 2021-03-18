@@ -5,3 +5,5 @@ APP_CPPFLAGS += -std=c++17
 APP_CPPFLAGS += -fexceptions
 APP_CPPFLAGS += -frtti
 APP_CPPFLAGS += -Wno-conversion-null
+LOCAL_SHORT_COMMANDS := true
+APP_SHORT_COMMANDS := true
