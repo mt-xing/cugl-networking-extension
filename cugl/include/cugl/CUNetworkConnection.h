@@ -79,6 +79,12 @@ namespace cugl {
 		 */
 		void startGame();
 
+		/** Returns the player ID or empty if not connected */
+		std::optional<uint8_t> getPlayerID() { return playerID; }
+
+		/** Returns the room ID or empty string if not connected */
+		std::string getRoomID() { return roomID; }
+
 	private:
 		/** Connection object */
 		std::unique_ptr<SLNet::RakPeerInterface> peer;

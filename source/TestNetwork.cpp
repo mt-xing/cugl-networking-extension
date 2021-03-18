@@ -5,7 +5,7 @@
 TestNetwork::TestNetwork() {
 	net = std::make_shared<cugl::CUNetworkConnection>(
 		cugl::CUNetworkConnection::ConnectionConfig(
-			"35.231.212.113",
+			"34.74.68.73",
 			61111,
 			2,
 			0)

@@ -327,6 +327,7 @@ void CUNetworkConnection::receive(
 		}
 		case ID_USER_PACKET_ENUM + AssignedRoom: {
 			if (playerID != 0) {
+				CULog("Assigned room ID but ignoring");
 				break;
 			}
 			uint8_t ignored;
