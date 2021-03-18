@@ -153,6 +153,12 @@
     <Filter Include="Source Files\external\poly2tri">
       <UniqueIdentifier>{777a4f99-2747-4176-a9c9-9c9fc52b0633}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\net">
+      <UniqueIdentifier>{fb02c1ad-e7c1-4884-85cb-1deeba75409e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\net">
+      <UniqueIdentifier>{f31e848f-c10b-4ed8-a36b-23521d8152f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\cugl\math\cu_math.h">
@@ -650,8 +656,8 @@
     <ClInclude Include="..\..\lib\base\platform\CUDisplay-impl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\cugl\CUNetworkConnection.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\include\cugl\net\CUNetworkConnection.h">
+      <Filter>Header Files\net</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1054,8 +1060,8 @@
     <ClCompile Include="..\..\lib\util\CUThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\lib\CUNetworkConnection.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\lib\net\CUNetworkConnection.cpp">
+      <Filter>Source Files\net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

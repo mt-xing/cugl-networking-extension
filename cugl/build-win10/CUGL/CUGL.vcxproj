@@ -73,7 +73,6 @@
     <ClInclude Include="..\..\include\cugl\base\cu_platform.h" />
     <ClInclude Include="..\..\include\cugl\base\platform\CUDisplay-impl.h" />
     <ClInclude Include="..\..\include\cugl\cugl.h" />
-    <ClInclude Include="..\..\include\cugl\CUNetworkConnection.h" />
     <ClInclude Include="..\..\include\cugl\input\CUAccelerometer.h" />
     <ClInclude Include="..\..\include\cugl\input\CUInput.h" />
     <ClInclude Include="..\..\include\cugl\input\CUKeyboard.h" />
@@ -131,6 +130,7 @@
     <ClInclude Include="..\..\include\cugl\math\polygon\CUSimpleExtruder.h" />
     <ClInclude Include="..\..\include\cugl\math\polygon\CUSimpleTriangulator.h" />
     <ClInclude Include="..\..\include\cugl\math\polygon\cu_polygon.h" />
+    <ClInclude Include="..\..\include\cugl\net\CUNetworkConnection.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUBoxObstacle.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUCapsuleObstacle.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUComplexObstacle.h" />
@@ -235,7 +235,6 @@
     <ClCompile Include="..\..\lib\base\CUApplication.cpp" />
     <ClCompile Include="..\..\lib\base\CUDisplay.cpp" />
     <ClCompile Include="..\..\lib\base\platform\CUDisplay-SDL.cpp" />
-    <ClCompile Include="..\..\lib\CUNetworkConnection.cpp" />
     <ClCompile Include="..\..\lib\input\CUAccelerometer.cpp" />
     <ClCompile Include="..\..\lib\input\CUInput.cpp" />
     <ClCompile Include="..\..\lib\input\CUKeyboard.cpp" />
@@ -286,6 +285,7 @@
     <ClCompile Include="..\..\lib\math\polygon\CUPolySplineFactory.cpp" />
     <ClCompile Include="..\..\lib\math\polygon\CUSimpleExtruder.cpp" />
     <ClCompile Include="..\..\lib\math\polygon\CUSimpleTriangulator.cpp" />
+    <ClCompile Include="..\..\lib\net\CUNetworkConnection.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUBoxObstacle.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUCapsuleObstacle.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUComplexObstacle.cpp" />

@@ -1,4 +1,4 @@
-#include <cugl/CUNetworkConnection.h>
+#include <cugl/net/CUNetworkConnection.h>
 
 #include <cugl/cugl.h>
 

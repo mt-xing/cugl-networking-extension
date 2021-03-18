@@ -1,7 +1,7 @@
 #ifndef TEST_NETWORK_H
 #define TEST_NETWORK_H
 
-#include <cugl/CUNetworkConnection.h>
+#include <cugl/cugl.h>
 
 class TestNetwork {
 private:
