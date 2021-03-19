@@ -343,9 +343,9 @@
 		8251321F2602F54B001B0E34 /* RakMemoryOverride.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825130C52602F549001B0E34 /* RakMemoryOverride.cpp */; };
 		825132202602F54B001B0E34 /* RakMemoryOverride.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825130C52602F549001B0E34 /* RakMemoryOverride.cpp */; };
 		825132212602F54B001B0E34 /* RakMemoryOverride.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825130C52602F549001B0E34 /* RakMemoryOverride.cpp */; };
-		828E67BC2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67BB2603F9AF00ACA041 /* CUNetworkConnection.cpp */; };
-		828E67BD2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67BB2603F9AF00ACA041 /* CUNetworkConnection.cpp */; };
-		828E67BE2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 828E67BB2603F9AF00ACA041 /* CUNetworkConnection.cpp */; };
+		82EA7C1F2604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82EA7C1E2604230B00DB7DB2 /* CUNetworkConnection.cpp */; };
+		82EA7C202604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82EA7C1E2604230B00DB7DB2 /* CUNetworkConnection.cpp */; };
+		82EA7C212604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82EA7C1E2604230B00DB7DB2 /* CUNetworkConnection.cpp */; };
 		EB035D8D20C0D34D0001EAE3 /* CUFIRFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB035D8C20C0D34D0001EAE3 /* CUFIRFilter.cpp */; };
 		EB035D8E20C0D34D0001EAE3 /* CUFIRFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB035D8C20C0D34D0001EAE3 /* CUFIRFilter.cpp */; };
 		EB035D9020C0D3B20001EAE3 /* CUOneZeroFIR.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB035D8F20C0D3B20001EAE3 /* CUOneZeroFIR.cpp */; };
@@ -1066,8 +1066,8 @@
 		825130C32602F549001B0E34 /* RakNetSocket2_NativeClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RakNetSocket2_NativeClient.cpp; sourceTree = "<group>"; };
 		825130C42602F549001B0E34 /* RPC4Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RPC4Plugin.cpp; sourceTree = "<group>"; };
 		825130C52602F549001B0E34 /* RakMemoryOverride.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RakMemoryOverride.cpp; sourceTree = "<group>"; };
-		828E67B52603F92C00ACA041 /* CUNetworkConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CUNetworkConnection.h; sourceTree = "<group>"; };
-		828E67BB2603F9AF00ACA041 /* CUNetworkConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUNetworkConnection.cpp; sourceTree = "<group>"; };
+		82EA7C1E2604230B00DB7DB2 /* CUNetworkConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CUNetworkConnection.cpp; sourceTree = "<group>"; };
+		82EA7C262604233000DB7DB2 /* CUNetworkConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CUNetworkConnection.h; sourceTree = "<group>"; };
 		EB035D7A20C0D0F80001EAE3 /* CUFIRFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CUFIRFilter.h; sourceTree = "<group>"; };
 		EB035D8920C0D1590001EAE3 /* CUOneZeroFIR.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CUOneZeroFIR.h; sourceTree = "<group>"; };
 		EB035D8C20C0D34D0001EAE3 /* CUFIRFilter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CUFIRFilter.cpp; sourceTree = "<group>"; };
@@ -1751,6 +1751,22 @@
 			path = slikenet/Source/src;
 			sourceTree = "<group>";
 		};
+		82EA7C1D2604230B00DB7DB2 /* net */ = {
+			isa = PBXGroup;
+			children = (
+				82EA7C1E2604230B00DB7DB2 /* CUNetworkConnection.cpp */,
+			);
+			path = net;
+			sourceTree = "<group>";
+		};
+		82EA7C252604233000DB7DB2 /* net */ = {
+			isa = PBXGroup;
+			children = (
+				82EA7C262604233000DB7DB2 /* CUNetworkConnection.h */,
+			);
+			path = net;
+			sourceTree = "<group>";
+		};
 		EB0789511D302051000BFDF7 /* input */ = {
 			isa = PBXGroup;
 			children = (
@@ -2165,7 +2181,7 @@
 		EBC2F15F1D74A67B007EC7A6 /* Include */ = {
 			isa = PBXGroup;
 			children = (
-				828E67B52603F92C00ACA041 /* CUNetworkConnection.h */,
+				82EA7C252604233000DB7DB2 /* net */,
 				EBC2F18C1D74AA1D007EC7A6 /* cugl.h */,
 				EBC2F1601D74A685007EC7A6 /* base */,
 				EBC2F1611D74A6B6007EC7A6 /* util */,
@@ -2550,7 +2566,7 @@
 		EBFFD70E1CFCA12A00E047D2 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				828E67BB2603F9AF00ACA041 /* CUNetworkConnection.cpp */,
+				82EA7C1D2604230B00DB7DB2 /* net */,
 				EB4AEC011CFCB9C70090AF7F /* base */,
 				EB4AEC1B1CFDB98B0090AF7F /* util */,
 				EB4AEC081CFCC09E0090AF7F /* math */,
@@ -2696,7 +2712,7 @@
 				EB22BEC625D0E633002ACE41 /* CUAudioDecoder.cpp in Sources */,
 				EB22BF1925D0E66C002ACE41 /* CUPoly2.cpp in Sources */,
 				EB22BEB025D0E61C002ACE41 /* CUSlider.cpp in Sources */,
-				828E67BE2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */,
+				82EA7C212604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */,
 				EB22BEA325D0E616002ACE41 /* CUSceneNode.cpp in Sources */,
 				825131342602F54A001B0E34 /* LinuxStrings.cpp in Sources */,
 				EB22BEE925D0E64B002ACE41 /* CUTextReader.cpp in Sources */,
@@ -2949,7 +2965,7 @@
 				EB44513F21E8F9E700C6DF32 /* CUAudioNode.cpp in Sources */,
 				EB839E241DCD8305001039BC /* CUObstacleWorld.cpp in Sources */,
 				EB44514621E8FA2200C6DF32 /* CUWAVDecoder.cpp in Sources */,
-				828E67BD2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */,
+				82EA7C202604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */,
 				EB839E1A1DCD8305001039BC /* CUObstacle.cpp in Sources */,
 				825131332602F54A001B0E34 /* LinuxStrings.cpp in Sources */,
 				EB7453FA1D74D276002FBAE6 /* CUVec2.cpp in Sources */,
@@ -3202,7 +3218,7 @@
 				EBE91E2A1DCFF18D00F80D62 /* CUBoxObstacle.cpp in Sources */,
 				EBE91E2B1DCFF18D00F80D62 /* CUObstacleSelector.cpp in Sources */,
 				EBE91E2C1DCFF18D00F80D62 /* CUSimpleObstacle.cpp in Sources */,
-				828E67BC2603F9AF00ACA041 /* CUNetworkConnection.cpp in Sources */,
+				82EA7C1F2604230B00DB7DB2 /* CUNetworkConnection.cpp in Sources */,
 				EBA1EE4621D1422800A7AF81 /* CUDSPMath.cpp in Sources */,
 				825131322602F54A001B0E34 /* LinuxStrings.cpp in Sources */,
 				EB789F31208AD69A00389383 /* CUTwoPoleIIR.cpp in Sources */,
@@ -3450,7 +3466,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -3477,7 +3493,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
