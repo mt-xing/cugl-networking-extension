@@ -82,11 +82,31 @@ namespace cugl {
 		 */
 		void startGame();
 
-		/** Returns the player ID or empty if not connected */
+		/**
+		 * Returns the player ID or empty.
+		 * 
+		 * If this player is the host, this is guaranteed to be 0, even before a connection is established.
+		 * 
+		 * Otherwise, as client, this will return empty until connected to host and a player ID is assigned.
+		 */
 		std::optional<uint8_t> getPlayerID() { return playerID; }
 
-		/** Returns the room ID or empty string if not connected */
+		/**
+		 * Returns the room ID or empty string.
+		 * 
+		 * If this player is a client, this will return the room ID this object was constructed with.
+		 * 
+		 * Otherwise, as host, this will return the empty string until connected to the punchthrough server
+		 * and a room ID is assigned.
+		 */
 		std::string getRoomID() { return roomID; }
+
+		/** Return the number of players currently connected to this game */
+		uint8_t getNumPlayers() { return numPlayers; }
+
+		/** Return the number of players present when the game was started
+		 *  (including players that may have disconnected) */
+		uint8_t getTotalPlayers() { return maxPlayers;  }
 
 	private:
 		/** Connection object */

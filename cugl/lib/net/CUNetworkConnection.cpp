@@ -67,7 +67,7 @@ constexpr unsigned int SHUTDOWN_BLOCK = 10;
 constexpr uint8_t ROOM_LENGTH = 5;
 
 CUNetworkConnection::CUNetworkConnection(const ConnectionConfig& config)
-	: apiVer(config.apiVersion), numPlayers(1), maxPlayers(0), playerID(0) {
+	: apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0) {
 	startupConn(config);
 	remotePeer = HostPeers(config.maxNumPlayers);
 }
@@ -198,6 +198,7 @@ void CUNetworkConnection::receive(
 										static_cast<unsigned int>(connMsg.size()));
 									peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
 										packet->systemAddress, false);
+									maxPlayers++;
 								}
 								break;
 							}
@@ -227,11 +228,11 @@ void CUNetworkConnection::receive(
 					auto p = packet->systemAddress;
 
 					bool hasRoom = false;
-					for (size_t i = 0; i < h.peers.size(); i++) {
+					for (uint8_t i = 0; i < h.peers.size(); i++) {
 						if (h.peers.at(i) == nullptr) {
 							hasRoom = true;
 							h.peers.at(i) = std::make_unique<SLNet::SystemAddress>(p);
-							numPlayers++;
+							// numPlayers++;
 							break;
 						}
 					}
@@ -367,6 +368,7 @@ void CUNetworkConnection::receive(
 						// TODO report API mismatch error
 					}
 					numPlayers = msgConverted[0];
+					maxPlayers = numPlayers;
 					playerID = msgConverted[1];
 				}), remotePeer);
 			break;
@@ -393,6 +395,7 @@ void CUNetworkConnection::receive(
 				[&](ClientPeer& c) {
 					connectedPlayers.set(msgConverted[0]);
 					numPlayers++;
+					maxPlayers++;
 				}), remotePeer);
 
 			break;
