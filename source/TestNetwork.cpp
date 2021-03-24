@@ -10,8 +10,7 @@ TestNetwork::TestNetwork() {
 			"34.74.68.73",
 			61111,
 			3,
-			0),
-		"10896"
+			0)
 		);
 	cugl::Input::activate<cugl::Keyboard>();
 }

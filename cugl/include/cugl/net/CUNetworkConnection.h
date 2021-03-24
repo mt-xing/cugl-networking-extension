@@ -21,6 +21,8 @@ namespace SLNet {
 namespace cugl {
 	class CUNetworkConnection {
 	public:
+
+#pragma region Setup
 		/**
 		 * Basic data needed to setup a connection
 		 */
@@ -59,7 +61,9 @@ namespace cugl {
 
 		/** Delete and cleanup this connection. */
 		~CUNetworkConnection();
+#pragma endregion
 
+#pragma region Main Networking Methods
 		/**
 		 * Sends a byte array to all other players.
 		 *
@@ -70,17 +74,56 @@ namespace cugl {
 		void send(const std::vector<uint8_t>& msg);
 
 		/**
-		 * Method to call every frame to process incoming network messages.
+		 * Method to call every network frame to process incoming network messages.
+		 * 
+		 * A network frame can, but need not be, the same as a render frame.
+		 * 
+		 * This method must be called periodically EVEN BEFORE A CONNECTION IS ESTABLISHED.
+		 * Otherwise, the library has no way to receive and process incoming connections.
 		 *
 		 * @param dispatcher Function that will be called on every byte array sent by other players.
 		 */
 		void receive(const std::function<void(const std::vector<uint8_t>&)>& dispatcher);
+#pragma endregion
 
+#pragma region State Management
 		/**
 		 * Mark the game as started and ban incoming connections except for reconnects.
-		 * PRECONDITION: Should only be called by host.
+		 * PRECONDITION: Can only be called by the host.
 		 */
 		void startGame();
+
+		/**
+		 * Potential states the networking could be in
+		 */
+		enum class NetStatus {
+			// No connection
+			Disconnected,
+			// If host, waiting on Room ID from server; if client, waiting on Player ID from host
+			Pending,
+			// If host, accepting connections; if client, successfully connected to host
+			Connected,
+			// Lost connection, attempting to reconnect (failure causes disconnection)
+			Reconnecting,
+			// Room ID does not exist
+			RoomNotFound,
+			// Room ID exists but is already full
+			RoomFull,
+			// API version numbers do not match between host, client, and Punchthrough Server
+			// (when running your own punchthrough server, you can specify a minimum API version
+			// that your server will require, or else it will reject the connection.
+			// If you're using my demo server, that minimum is 0.
+			ApiMismatch,
+			// Something went wrong and IDK what :(
+			GenericError
+		};
+#pragma endregion
+
+#pragma region Getters
+		/**
+		 * The current status of this network connection.
+		 */
+		NetStatus getStatus();
 
 		/**
 		 * Returns the player ID or empty.
@@ -107,12 +150,15 @@ namespace cugl {
 		/** Return the number of players present when the game was started
 		 *  (including players that may have disconnected) */
 		uint8_t getTotalPlayers() { return maxPlayers;  }
+#pragma endregion
 
 	private:
 		/** Connection object */
 		std::unique_ptr<SLNet::RakPeerInterface> peer;
 
 #pragma region State
+		/** Current status */
+		NetStatus status;
 		/** API version number */
 		const uint8_t apiVer;
 		/** Number of players currently connected */
@@ -175,7 +221,8 @@ namespace cugl {
 			JoinRoomFail,
 			Reconnect,
 			PlayerJoined,
-			PlayerLeft
+			PlayerLeft,
+			StartGame
 		};
 
 		/** Initialize the connection */
