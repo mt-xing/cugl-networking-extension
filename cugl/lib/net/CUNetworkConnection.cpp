@@ -243,6 +243,23 @@ void CUNetworkConnection::send(const std::vector<uint8_t>& msg, CustomDataPacket
 		}), remotePeer);
 }
 
+/**
+ * Read the message from a bitstream into a byte vector.
+ * 
+ * Only works if the BitStream was encoded in the standard format used by this clas.
+ */
+std::vector<uint8_t> readBs(SLNet::BitStream& bts) {
+	uint8_t ignored;
+	bts.Read(ignored);
+	uint8_t length;
+	bts.Read(length);
+	uint8_t* message = new uint8_t[length];
+	bts.ReadAlignedBytes(message, length);
+	std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+	delete[] message;
+	return msgConverted;
+}
+
 void CUNetworkConnection::receive(
 	const std::function<void(const std::vector<uint8_t>&)>& dispatcher) {
 	SLNet::Packet* packet = nullptr;
@@ -346,23 +363,15 @@ void CUNetworkConnection::receive(
 			status = NetStatus::RoomFull;
 			break;
 
-			// Begin Non-SLikeNet Reported Codes
+		// Begin Non-SLikeNet Reported Codes
 		case ID_USER_PACKET_ENUM + Standard: {
-			uint8_t ignored;
-			bts.Read(ignored);
-			uint8_t length;
-			bts.Read(length);
-			uint8_t* message = new uint8_t[length];
-			bts.ReadAlignedBytes(message, length);
-			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
-
+			auto msgConverted = readBs(bts);
 			dispatcher(msgConverted);
 
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { broadcast(msgConverted, packet->systemAddress); },
 				[&](ClientPeer& c) {}), remotePeer);
 
-			delete[] message;
 			break;
 		}
 		case ID_USER_PACKET_ENUM + AssignedRoom: {
@@ -370,13 +379,7 @@ void CUNetworkConnection::receive(
 				CULog("Assigned room ID but ignoring");
 				break;
 			}
-			uint8_t ignored;
-			bts.Read(ignored);
-			uint8_t length;
-			bts.Read(length);
-			uint8_t* message = new uint8_t[length];
-			bts.ReadAlignedBytes(message, length);
-			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+			auto msgConverted = readBs(bts);
 			std::stringstream newRoomId;
 			for (size_t i = 0; i < ROOM_LENGTH; i++) {
 				newRoomId << static_cast<char>(msgConverted[i]);
@@ -385,24 +388,16 @@ void CUNetworkConnection::receive(
 			roomID = newRoomId.str();
 			CULog("Got room ID: %s", roomID.c_str());
 			status = NetStatus::Connected;
-			delete[] message;
 			break;
 		}
 		case ID_USER_PACKET_ENUM + JoinRoom: {
-			uint8_t ignored;
-			bts.Read(ignored);
-			uint8_t length;
-			bts.Read(length);
-			uint8_t* message = new uint8_t[length];
-			bts.ReadAlignedBytes(message, length);
-			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+			auto msgConverted = readBs(bts);
 
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { CULogError("Received join room message as host"); },
 				[&](ClientPeer& c) {
 					cc6ClientAssignedID(c, msgConverted);
 				}), remotePeer);
-			delete[] message;
 			break;
 		}
 		case ID_USER_PACKET_ENUM + JoinRoomFail: {
@@ -414,13 +409,7 @@ void CUNetworkConnection::receive(
 			break;
 		}
 		case ID_USER_PACKET_ENUM + PlayerJoined: {
-			uint8_t ignored;
-			bts.Read(ignored);
-			uint8_t length;
-			bts.Read(length);
-			uint8_t* message = new uint8_t[length];
-			bts.ReadAlignedBytes(message, length);
-			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+			auto msgConverted = readBs(bts);
 
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { CULogError("Received player joined message as host"); },
@@ -429,18 +418,11 @@ void CUNetworkConnection::receive(
 					numPlayers++;
 					maxPlayers++;
 				}), remotePeer);
-			delete[] message;
 
 			break;
 		}
 		case ID_USER_PACKET_ENUM + PlayerLeft: {
-			uint8_t ignored;
-			bts.Read(ignored);
-			uint8_t length;
-			bts.Read(length);
-			uint8_t* message = new uint8_t[length];
-			bts.ReadAlignedBytes(message, length);
-			std::vector<uint8_t> msgConverted(&message[0], &message[length]);
+			auto msgConverted = readBs(bts);
 
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { CULogError("Received player left message as host"); },
@@ -448,7 +430,6 @@ void CUNetworkConnection::receive(
 					connectedPlayers.reset(msgConverted[0]);
 					numPlayers--;
 				}), remotePeer);
-			delete[] message;
 			break;
 		}
 		case ID_USER_PACKET_ENUM + StartGame: {
