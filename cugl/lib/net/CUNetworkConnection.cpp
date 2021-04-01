@@ -68,13 +68,13 @@ constexpr uint8_t ROOM_LENGTH = 5;
 
 CUNetworkConnection::CUNetworkConnection(const ConnectionConfig& config)
 	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0) {
-	startupConn(config);
+	c0StartupConn(config);
 	remotePeer = HostPeers(config.maxNumPlayers);
 }
 
 CUNetworkConnection::CUNetworkConnection(const ConnectionConfig& config, std::string roomID)
 	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(0) {
-	startupConn(config);
+	c0StartupConn(config);
 	remotePeer = ClientPeer(std::move(roomID));
 	peer->SetMaximumIncomingConnections(1);
 }
@@ -84,7 +84,9 @@ CUNetworkConnection::~CUNetworkConnection() {
 	SLNet::RakPeerInterface::DestroyInstance(peer.release());
 }
 
-void CUNetworkConnection::startupConn(const ConnectionConfig& config) {
+#pragma region Connection Handshake
+
+void CUNetworkConnection::c0StartupConn(const ConnectionConfig& config) {
 	peer = std::unique_ptr<SLNet::RakPeerInterface>(SLNet::RakPeerInterface::GetInstance());
 
 	peer->AttachPlugin(&(natPunchthroughClient));
@@ -105,6 +107,112 @@ void CUNetworkConnection::startupConn(const ConnectionConfig& config) {
 	peer->Connect(this->natPunchServerAddress->ToString(false),
 		this->natPunchServerAddress->GetPort(), nullptr, 0);
 }
+
+void cugl::CUNetworkConnection::ch1HostConnServer(HostPeers& h) {
+	CULog("Connected to punchthrough server");
+	CULog("Accepting connections now");
+	peer->SetMaximumIncomingConnections(h.maxPlayers);
+}
+
+void cugl::CUNetworkConnection::cc1ClientConnServer(ClientPeer& c) {
+	CULog("Connected to punchthrough server");
+	CULog("Trying to connect to %s", c.room.c_str());
+	SLNet::RakNetGUID remote;
+	remote.FromString(c.room.c_str());
+	this->natPunchthroughClient.OpenNAT(remote,
+		*(this->natPunchServerAddress));
+}
+
+void cugl::CUNetworkConnection::cc2ClientPunchSuccess(ClientPeer& c, SLNet::Packet* packet) {
+	c.addr = std::make_unique<SLNet::SystemAddress>(packet->systemAddress);
+}
+
+void cugl::CUNetworkConnection::cc3HostReceivedPunch(HostPeers& h, SLNet::Packet* packet) {
+	auto p = packet->systemAddress;
+
+	bool hasRoom = false;
+	for (uint8_t i = 0; i < h.peers.size(); i++) {
+		if (h.peers.at(i) == nullptr) {
+			hasRoom = true;
+			h.peers.at(i) = std::make_unique<SLNet::SystemAddress>(p);
+			break;
+		}
+	}
+
+	if (hasRoom) {
+		CULog("Connecting to client now");
+		peer->Connect(p.ToString(false), p.GetPort(), nullptr, 0);
+	}
+	else {
+		CULogError(
+			"Client attempted to join but room was full - if you're seeing "
+			"this error, that means somehow there are ghost clients not "
+			"actually connected even though mib thinks they are");
+	}
+}
+
+void cugl::CUNetworkConnection::cc4ClientReceiveHostConnection(ClientPeer& c, SLNet::Packet* packet) {
+	if (packet->systemAddress == *c.addr) {
+		CULog("Connected to host :D");
+	}
+}
+
+void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet* packet) {
+	for (uint8_t i = 0; i < h.peers.size(); i++) {
+		if (*h.peers.at(i) == packet->systemAddress) {
+			uint8_t pID = i + 1;
+			CULog("Player %d accepted connection request", pID);
+
+			connectedPlayers.set(pID);
+			std::vector<uint8_t> joinMsg = { pID };
+			broadcast(joinMsg, packet->systemAddress, PlayerJoined);
+			numPlayers++;
+
+			if (h.started) {
+				// Reconnection attempt
+				SLNet::BitStream bs;
+				std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
+				bs.Write(
+					static_cast<uint8_t>(ID_USER_PACKET_ENUM + Reconnect));
+				bs.Write(static_cast<uint8_t>(connMsg.size()));
+				bs.WriteAlignedBytes(
+					connMsg.data(),
+					static_cast<unsigned int>(connMsg.size()));
+				peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
+					packet->systemAddress, false);
+			}
+			else {
+				SLNet::BitStream bs;
+				std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
+				bs.Write(
+					static_cast<uint8_t>(ID_USER_PACKET_ENUM + JoinRoom));
+				bs.Write(static_cast<uint8_t>(connMsg.size()));
+				bs.WriteAlignedBytes(
+					connMsg.data(),
+					static_cast<unsigned int>(connMsg.size()));
+				peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
+					packet->systemAddress, false);
+				maxPlayers++;
+			}
+			break;
+		}
+	}
+}
+
+void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
+
+	if (msgConverted[2] != apiVer) {
+		CULogError("API version mismatch; currently %d but host was %d", apiVer,
+			msgConverted[2]);
+		status = NetStatus::ApiMismatch;
+	}
+	numPlayers = msgConverted[0];
+	maxPlayers = numPlayers;
+	playerID = msgConverted[1];
+	status = NetStatus::Connected;
+}
+
+#pragma endregion
 
 void CUNetworkConnection::broadcast(const std::vector<uint8_t>& msg, SLNet::SystemAddress& ignore,
 	CustomDataPackets packetType) {
@@ -142,67 +250,23 @@ void CUNetworkConnection::receive(
 		peer->DeallocatePacket(packet), packet = peer->Receive()) {
 		SLNet::BitStream bts(packet->data, packet->length, false);
 
-		// NOLINTNEXTLINE Dealing with an old 2000s era C++ library here
 		switch (packet->data[0]) {
-		case ID_CONNECTION_REQUEST_ACCEPTED: // Connected to some remote server
+		case ID_CONNECTION_REQUEST_ACCEPTED:
+			// Connected to some remote server
 			if (packet->systemAddress == *(this->natPunchServerAddress)) {
-				CULog("Connected to punchthrough server");
-
+				// Punchthrough server
 				std::visit(make_visitor(
 					[&](HostPeers& h) {
-						CULog("Accepting connections now");
-						peer->SetMaximumIncomingConnections(h.maxPlayers);
+						ch1HostConnServer(h);
 					},
 					[&](ClientPeer& c) {
-						CULog("Trying to connect to %s", c.room.c_str());
-						SLNet::RakNetGUID remote;
-						remote.FromString(c.room.c_str());
-						this->natPunchthroughClient.OpenNAT(remote,
-							*(this->natPunchServerAddress));
+						cc1ClientConnServer(c);
 					}), remotePeer);
 			}
 			else {
 				std::visit(make_visitor(
 					[&](HostPeers& h) {
-						for (uint8_t i = 0; i < h.peers.size(); i++) {
-							if (*h.peers.at(i) == packet->systemAddress) {
-								uint8_t pID = i + 1;
-								CULog("Player %d accepted connection request", pID);
-
-								connectedPlayers.set(pID);
-								std::vector<uint8_t> joinMsg = { pID };
-								broadcast(joinMsg, packet->systemAddress, PlayerJoined);
-								numPlayers++;
-
-								if (h.started) {
-									// Reconnection attempt
-									SLNet::BitStream bs;
-									std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
-									bs.Write(
-										static_cast<uint8_t>(ID_USER_PACKET_ENUM + Reconnect));
-									bs.Write(static_cast<uint8_t>(connMsg.size()));
-									bs.WriteAlignedBytes(
-										connMsg.data(),
-										static_cast<unsigned int>(connMsg.size()));
-									peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
-										packet->systemAddress, false);
-								}
-								else {
-									SLNet::BitStream bs;
-									std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
-									bs.Write(
-										static_cast<uint8_t>(ID_USER_PACKET_ENUM + JoinRoom));
-									bs.Write(static_cast<uint8_t>(connMsg.size()));
-									bs.WriteAlignedBytes(
-										connMsg.data(),
-										static_cast<unsigned int>(connMsg.size()));
-									peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
-										packet->systemAddress, false);
-									maxPlayers++;
-								}
-								break;
-							}
-						}
+						cc5HostConfirmClient(h, packet);
 					},
 					[&](ClientPeer& /*c*/) {
 						CULogError(
@@ -215,10 +279,7 @@ void CUNetworkConnection::receive(
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { CULogError("How did that happen? You're the host"); },
 				[&](ClientPeer& c) {
-					if (packet->systemAddress == *c.addr) {
-						CULog("Connected to host :D");
-						status = NetStatus::Connected;
-					}
+					cc4ClientReceiveHostConnection(c, packet);
 				}), remotePeer);
 			break;
 		case ID_NAT_PUNCHTHROUGH_SUCCEEDED: // Punchthrough succeeded
@@ -226,30 +287,10 @@ void CUNetworkConnection::receive(
 
 			std::visit(make_visitor(
 				[&](HostPeers& h) {
-					auto p = packet->systemAddress;
-
-					bool hasRoom = false;
-					for (uint8_t i = 0; i < h.peers.size(); i++) {
-						if (h.peers.at(i) == nullptr) {
-							hasRoom = true;
-							h.peers.at(i) = std::make_unique<SLNet::SystemAddress>(p);
-							break;
-						}
-					}
-
-					if (hasRoom) {
-						CULog("Connecting to client now");
-						peer->Connect(p.ToString(false), p.GetPort(), nullptr, 0);
-					}
-					else {
-						CULogError(
-							"Client attempted to join but room was full - if you're seeing "
-							"this error, that means somehow there are ghost clients not "
-							"actually connected even though mib thinks they are");
-					}
+					cc3HostReceivedPunch(h, packet);
 				},
 				[&](ClientPeer& c) {
-					c.addr = std::make_unique<SLNet::SystemAddress>(packet->systemAddress);
+					cc2ClientPunchSuccess(c, packet);
 				}), remotePeer);
 			break;
 		case ID_NAT_TARGET_NOT_CONNECTED:
@@ -359,14 +400,7 @@ void CUNetworkConnection::receive(
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { CULogError("Received join room message as host"); },
 				[&](ClientPeer& c) {
-					if (msgConverted[2] != apiVer) {
-						CULogError("API version mismatch; currently %d but host was %d", apiVer,
-							msgConverted[2]);
-						status = NetStatus::ApiMismatch;
-					}
-					numPlayers = msgConverted[0];
-					maxPlayers = numPlayers;
-					playerID = msgConverted[1];
+					cc6ClientAssignedID(c, msgConverted);
 				}), remotePeer);
 			delete[] message;
 			break;

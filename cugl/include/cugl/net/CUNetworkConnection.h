@@ -144,6 +144,15 @@ namespace cugl {
 		 */
 		std::string getRoomID() { return roomID; }
 
+		/**
+		 * Returns true if the given player ID is currently connected to the game.
+		 * 
+		 * Does not return meaningful data until a connection is established.
+		 * 
+		 * As a client, if disconnected from host, player ID 0 will return disconnected.
+		 */
+		bool isPlayerActive(uint8_t playerID) { return connectedPlayers.test(playerID); }
+
 		/** Return the number of players currently connected to this game */
 		uint8_t getNumPlayers() { return numPlayers; }
 
@@ -225,8 +234,50 @@ namespace cugl {
 			StartGame
 		};
 
-		/** Initialize the connection */
-		void startupConn(const ConnectionConfig& config);
+#pragma region Connection Handshake
+
+		/*
+		===============================
+		 Connection Handshake Overview
+		===============================
+
+				Host		Punchthrough Server			Client
+				====		===================			======
+		c0		Connect ------------->
+				  <--------- Conn Req Accepted
+		ch1		Accept Req
+
+		c0							 <----------------- Connect
+							 Conn Req Accepted ------------>
+		cc1							 <----------------- Try connect to host
+				  <--------- Punch Succeeded -------------->
+		cc2												Save host address
+		cc3		Check hasRoom
+				Connect ----------------------------------->
+		cc4		  <------------------------------------ Incoming connection
+		cc5		Request Accepted -------------------------->
+		cc6												Join Room
+		
+		*/
+
+		/** Step 0: Connect to punchthrough server (both client and host) */
+		void c0StartupConn(const ConnectionConfig& config);
+		/** Host Step 1: Server connection established; awaiting incoming connections */
+		void ch1HostConnServer(HostPeers& h);
+		/** Client Step 1: Server connection established; request punchthrough to host from server */
+		void cc1ClientConnServer(ClientPeer& c);
+		/** Client Step 2: Client received successful punchthrough from server */
+		void cc2ClientPunchSuccess(ClientPeer& c, SLNet::Packet* packet);
+		/** Client Step 3: Host received successful punchthrough request passed through from server */
+		void cc3HostReceivedPunch(HostPeers& h, SLNet::Packet* packet);
+		/** Client Step 4: Client received direct connection request from host */
+		void cc4ClientReceiveHostConnection(ClientPeer& c, SLNet::Packet* packet);
+		/** Client Step 5: Host received confirmation of connection from client */
+		void cc5HostConfirmClient(HostPeers& h, SLNet::Packet* packet);
+		/** Client Step 6: Client received player ID from host; connection finished */
+		void cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted);
+
+#pragma endregion
 
 		/**
 		 * Broadcast a message to everyone except the specified connection.
