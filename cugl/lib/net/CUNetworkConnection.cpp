@@ -171,7 +171,7 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 			if (h.started) {
 				// Reconnection attempt
 				SLNet::BitStream bs;
-				std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
+				std::vector<uint8_t> connMsg = { numPlayers, maxPlayers, pID, apiVer };
 				bs.Write(
 					static_cast<uint8_t>(ID_USER_PACKET_ENUM + Reconnect));
 				bs.Write(static_cast<uint8_t>(connMsg.size()));
@@ -182,8 +182,10 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 					packet->systemAddress, false);
 			}
 			else {
+				// New player connection
+				maxPlayers++;
 				SLNet::BitStream bs;
-				std::vector<uint8_t> connMsg = { numPlayers, pID, apiVer };
+				std::vector<uint8_t> connMsg = { numPlayers, maxPlayers, pID, apiVer };
 				bs.Write(
 					static_cast<uint8_t>(ID_USER_PACKET_ENUM + JoinRoom));
 				bs.Write(static_cast<uint8_t>(connMsg.size()));
@@ -192,7 +194,6 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 					static_cast<unsigned int>(connMsg.size()));
 				peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1,
 					packet->systemAddress, false);
-				maxPlayers++;
 			}
 			break;
 		}
@@ -200,15 +201,15 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 }
 
 void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
-
-	if (msgConverted[2] != apiVer) {
+	if (msgConverted[3] != apiVer) {
 		CULogError("API version mismatch; currently %d but host was %d", apiVer,
-			msgConverted[2]);
+			msgConverted[3]);
 		status = NetStatus::ApiMismatch;
 	}
 	numPlayers = msgConverted[0];
-	maxPlayers = numPlayers;
-	playerID = msgConverted[1];
+	maxPlayers = msgConverted[1];
+	playerID = msgConverted[2];
+	peer->CloseConnection(*natPunchServerAddress, true);
 	status = NetStatus::Connected;
 }
 
@@ -317,7 +318,7 @@ void CUNetworkConnection::receive(
 		case ID_REMOTE_CONNECTION_LOST:
 		case ID_DISCONNECTION_NOTIFICATION:
 		case ID_CONNECTION_LOST:
-			CULog("A disconnect occured");
+			CULog("Received disconnect notification");
 			std::visit(make_visitor(
 				[&](HostPeers& h) {
 					for (uint8_t i = 0; i < h.peers.size(); i++) {
@@ -337,6 +338,9 @@ void CUNetworkConnection::receive(
 					}
 				},
 				[&](ClientPeer& c) {
+					if (packet->systemAddress == *natPunchServerAddress) {
+						CULog("Successfully disconnected from Punchthrough server");
+					}
 					if (packet->systemAddress == *c.addr) {
 						CULog("Lost connection to host");
 						connectedPlayers.reset(0);
