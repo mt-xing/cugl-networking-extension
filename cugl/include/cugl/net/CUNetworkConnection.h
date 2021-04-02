@@ -9,6 +9,7 @@
 #include <vector>
 #include <optional>
 #include <variant>
+#include <unordered_set>
 
 #include <slikenet/BitStream.h>
 #include <slikenet/MessageIdentifiers.h>
@@ -191,9 +192,14 @@ namespace cugl {
 
 #pragma region Connection Data Structures
 		struct HostPeers {
+			/** Whether the game has started */
 			bool started;
+			/** Maximum number of players to allow in this game (NOT the max that was in this room) */
 			uint32_t maxPlayers;
+			/** Addresses of all connected players */
 			std::vector<std::unique_ptr<SLNet::SystemAddress>> peers;
+			/** Addresses of all players to reject */
+			std::unordered_set<std::string> toReject;
 
 			HostPeers() : started(false), maxPlayers(6) {
 				for (uint8_t i = 0; i < 5; i++) {
@@ -244,8 +250,9 @@ namespace cugl {
 				Host		Punchthrough Server			Client
 				====		===================			======
 		c0		Connect ------------->
-				  <--------- Conn Req Accepted
-		ch1		Accept Req
+		ch1		  <--------- Conn Req Accepted
+				  <--------- Room ID Assigned
+		ch2		Accept Req
 
 		c0							 <----------------- Connect
 							 Conn Req Accepted ------------>
@@ -262,8 +269,10 @@ namespace cugl {
 
 		/** Step 0: Connect to punchthrough server (both client and host) */
 		void c0StartupConn(const ConnectionConfig& config);
-		/** Host Step 1: Server connection established; awaiting incoming connections */
+		/** Host Step 1: Server connection established */
 		void ch1HostConnServer(HostPeers& h);
+		/** Host Step 2: Server gave room ID to host; awaiting incoming connections */
+		void ch2HostGetRoomID(HostPeers& h, SLNet::BitStream& bts);
 		/** Client Step 1: Server connection established; request punchthrough to host from server */
 		void cc1ClientConnServer(ClientPeer& c);
 		/** Client Step 2: Client received successful punchthrough from server */
