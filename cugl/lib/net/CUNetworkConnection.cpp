@@ -365,7 +365,20 @@ void CUNetworkConnection::receive(
 					if (packet->systemAddress == *c.addr) {
 						CULog("Lost connection to host");
 						connectedPlayers.reset(0);
-						status = NetStatus::Reconnecting;
+						switch (status) {
+						case NetStatus::Pending:
+							status = NetStatus::GenericError;
+							break;
+						case NetStatus::Connected:
+							status = NetStatus::Reconnecting;
+							break;
+						case NetStatus::Reconnecting:
+						case NetStatus::Disconnected:
+						case NetStatus::RoomNotFound:
+						case NetStatus::ApiMismatch:
+						case NetStatus::GenericError:
+							return;
+						}
 					}
 				}), remotePeer);
 
@@ -384,8 +397,7 @@ void CUNetworkConnection::receive(
 			break;
 		}
 		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			CULog("Room full");
-			status = NetStatus::RoomFull;
+			status = NetStatus::RoomNotFound;
 			break;
 
 		// Begin Non-SLikeNet Reported Codes

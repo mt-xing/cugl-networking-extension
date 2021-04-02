@@ -106,10 +106,8 @@ namespace cugl {
 			Connected,
 			// Lost connection, attempting to reconnect (failure causes disconnection)
 			Reconnecting,
-			// Room ID does not exist
+			// Room ID does not exist, or room is already full
 			RoomNotFound,
-			// Room ID exists but is already full
-			RoomFull,
 			// API version numbers do not match between host, client, and Punchthrough Server
 			// (when running your own punchthrough server, you can specify a minimum API version
 			// that your server will require, or else it will reject the connection.
