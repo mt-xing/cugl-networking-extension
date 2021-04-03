@@ -204,6 +204,7 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 			packet->systemAddress, false);
 
 		peer->CloseConnection(packet->systemAddress, true);
+		return;
 	}
 
 	for (uint8_t i = 0; i < h.peers.size(); i++) {
