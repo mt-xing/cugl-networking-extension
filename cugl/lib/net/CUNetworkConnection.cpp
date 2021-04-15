@@ -268,7 +268,7 @@ void cugl::CUNetworkConnection::cc7HostGetClientData(
 			}
 
 			if (msgConverted[1] == 0) {
-				CULog("Client %d reported outdated API; disconnecting", pID);
+				CULog("Client %d reported outdated API or other issue; disconnecting", pID);
 				peer->CloseConnection(packet->systemAddress, true);
 				return;
 			}
@@ -293,18 +293,22 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 
 	CULog("Reconnection Progress: Received data from host");
 
+	
+
 	bool success = msgConverted[3] == apiVer;
 	if (!success) {
 		CULogError("API version mismatch; currently %d but host was %d", apiVer,
 			msgConverted[3]);
 		status = NetStatus::ApiMismatch;
+	} else if (status != NetStatus::Reconnecting) {
+		CULogError("But we're not trying to reconnect. Failure.");
+		success = false;
 	} else if (playerID != msgConverted[2]) {
 		CULogError("Invalid reconnection target; we are player ID %d but host thought we were %d",
 			playerID.has_value() ? *playerID : -1, msgConverted[2]);
 		status = NetStatus::Disconnected;
 		success = false;
-	}
-	else {
+	} else {
 		CULog("Reconnection Progress: Connection OK");
 		numPlayers = msgConverted[0];
 		maxPlayers = msgConverted[1];
