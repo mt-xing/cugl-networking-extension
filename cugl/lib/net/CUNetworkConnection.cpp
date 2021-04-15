@@ -66,15 +66,21 @@ constexpr unsigned int SHUTDOWN_BLOCK = 10;
 /** Length of room IDs */
 constexpr uint8_t ROOM_LENGTH = 5;
 
-CUNetworkConnection::CUNetworkConnection(const ConnectionConfig& config)
-	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0) {
-	c0StartupConn(config);
+/** How long to wait between reconnection attempts (seconds) */
+constexpr size_t RECONN_GAP = 1;
+
+/** How long to wait before giving up on reconnection (seconds) */
+constexpr size_t RECONN_TIMEOUT = 10;
+
+CUNetworkConnection::CUNetworkConnection(ConnectionConfig config)
+	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0), config(config) {
+	c0StartupConn();
 	remotePeer = HostPeers(config.maxNumPlayers);
 }
 
-CUNetworkConnection::CUNetworkConnection(const ConnectionConfig& config, std::string roomID)
-	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(0) {
-	c0StartupConn(config);
+CUNetworkConnection::CUNetworkConnection(ConnectionConfig config, std::string roomID)
+	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(0), config(config) {
+	c0StartupConn();
 	remotePeer = ClientPeer(std::move(roomID));
 	peer->SetMaximumIncomingConnections(1);
 }
@@ -104,7 +110,7 @@ std::vector<uint8_t> readBs(SLNet::BitStream& bts) {
 
 #pragma region Connection Handshake
 
-void CUNetworkConnection::c0StartupConn(const ConnectionConfig& config) {
+void CUNetworkConnection::c0StartupConn() {
 	peer = std::unique_ptr<SLNet::RakPeerInterface>(SLNet::RakPeerInterface::GetInstance());
 
 	peer->AttachPlugin(&(natPunchthroughClient));
@@ -353,9 +359,46 @@ void cugl::CUNetworkConnection::directSend(
 	peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1, dest, false);
 }
 
+void cugl::CUNetworkConnection::attemptReconnect() {
+	CUAssertLog(disconnTime.has_value(), "No time for disconnect??");
+
+	time_t now = time(nullptr);
+	if (now - *disconnTime > RECONN_TIMEOUT) {
+		CULog("Reconnection timed out; giving up");
+		status = NetStatus::Disconnected;
+		return;
+	}
+
+	if (lastReconnAttempt.has_value()) {
+		if (now - *lastReconnAttempt < RECONN_GAP) {
+			// Too soon after last attempt; abort
+			return;
+		}
+	}
+	lastReconnAttempt = now;
+
+	c0StartupConn();
+}
+
 
 void CUNetworkConnection::receive(
 	const std::function<void(const std::vector<uint8_t>&)>& dispatcher) {
+
+	switch (status) {
+	case NetStatus::Reconnecting:
+		attemptReconnect();
+		return;
+	case NetStatus::Disconnected:
+	case NetStatus::GenericError:
+	case NetStatus::ApiMismatch:
+	case NetStatus::RoomNotFound:
+		return;
+	case NetStatus::Connected:
+	case NetStatus::Pending:
+		break;
+	}
+
+
 	SLNet::Packet* packet = nullptr;
 	for (packet = peer->Receive(); packet != nullptr;
 		peer->DeallocatePacket(packet), packet = peer->Receive()) {
@@ -431,6 +474,7 @@ void CUNetworkConnection::receive(
 							break;
 						case NetStatus::Connected:
 							status = NetStatus::Reconnecting;
+							disconnTime = time(nullptr);
 							break;
 						case NetStatus::Reconnecting:
 						case NetStatus::Disconnected:

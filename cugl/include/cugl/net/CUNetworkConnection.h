@@ -3,6 +3,7 @@
 
 #include <array>
 #include <bitset>
+#include <ctime>
 #include <functional>
 #include <string>
 #include <thread>
@@ -50,7 +51,7 @@ namespace cugl {
 		 *
 		 * @param setup Connection config
 		 */
-		explicit CUNetworkConnection(const ConnectionConfig& config);
+		explicit CUNetworkConnection(ConnectionConfig config);
 
 		/**
 		 * Start a new network connection as client.
@@ -58,7 +59,7 @@ namespace cugl {
 		 * @param setup Connection config
 		 * @param roomID The RakNet GUID of the host.
 		 */
-		CUNetworkConnection(const ConnectionConfig& config, std::string roomID);
+		CUNetworkConnection(ConnectionConfig config, std::string roomID);
 
 		/** Delete and cleanup this connection. */
 		~CUNetworkConnection();
@@ -239,6 +240,7 @@ namespace cugl {
 		};
 
 #pragma region Connection Handshake
+		ConnectionConfig config;
 
 		/*
 		===============================
@@ -266,7 +268,7 @@ namespace cugl {
 		*/
 
 		/** Step 0: Connect to punchthrough server (both client and host) */
-		void c0StartupConn(const ConnectionConfig& config);
+		void c0StartupConn();
 
 		/** Host Step 1: Server connection established */
 		void ch1HostConnServer(HostPeers& h);
@@ -317,6 +319,19 @@ namespace cugl {
 		 * @param dest Desination address
 		 */
 		void directSend(const std::vector<uint8_t>& msg, CustomDataPackets packetType, SLNet::SystemAddress dest);
+
+		/** Last reconnection attempt time, or none if n/a */
+		std::optional<time_t> lastReconnAttempt;
+		/** Time when disconnected, or none if connected */
+		std::optional<time_t> disconnTime;
+
+		/**
+		 * Attempt to reconnect to the host.
+		 * 
+		 * PRECONDITION: Must be called by client when in reconnecting phase.
+		 * A successful connection must have previously been established.
+		 */
+		void attemptReconnect();
 
 	};
 }
