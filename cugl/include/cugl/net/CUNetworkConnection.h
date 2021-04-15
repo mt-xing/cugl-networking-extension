@@ -267,10 +267,12 @@ namespace cugl {
 
 		/** Step 0: Connect to punchthrough server (both client and host) */
 		void c0StartupConn(const ConnectionConfig& config);
+
 		/** Host Step 1: Server connection established */
 		void ch1HostConnServer(HostPeers& h);
 		/** Host Step 2: Server gave room ID to host; awaiting incoming connections */
 		void ch2HostGetRoomID(HostPeers& h, SLNet::BitStream& bts);
+
 		/** Client Step 1: Server connection established; request punchthrough to host from server */
 		void cc1ClientConnServer(ClientPeer& c);
 		/** Client Step 2: Client received successful punchthrough from server */
@@ -281,8 +283,15 @@ namespace cugl {
 		void cc4ClientReceiveHostConnection(ClientPeer& c, SLNet::Packet* packet);
 		/** Client Step 5: Host received confirmation of connection from client */
 		void cc5HostConfirmClient(HostPeers& h, SLNet::Packet* packet);
-		/** Client Step 6: Client received player ID from host; connection finished */
+		/** Client Step 6: Client received player ID from host and API */
 		void cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted);
+		/** Client Step 7: Host received confirmation of game data from client; connection finished */
+		void cc7HostGetClientData(HostPeers& h, SLNet::Packet* packet, const std::vector<uint8_t>& msgConverted);
+
+		/** Reconnect Step 1: Picks up after client step 5; host sent reconn data to client */
+		void cr1ClientReceivedInfo(ClientPeer& c, const std::vector<uint8_t>& msgConverted);
+		/** Reconnect Step 2: Host received confirmation of game data from client */
+		void cr2HostGetClientResp(HostPeers& h, SLNet::Packet* packet, const std::vector<uint8_t>& msgConverted);
 
 #pragma endregion
 
@@ -299,6 +308,15 @@ namespace cugl {
 			CustomDataPackets packetType = Standard);
 
 		void send(const std::vector<uint8_t>& msg, CustomDataPackets packetType);
+
+		/**
+		 * Send a message to just one connection.
+		 * 
+		 * @param msg The message to send
+		 * @param packetType The type of custom data packet
+		 * @param dest Desination address
+		 */
+		void directSend(const std::vector<uint8_t>& msg, CustomDataPackets packetType, SLNet::SystemAddress dest);
 
 	};
 }
