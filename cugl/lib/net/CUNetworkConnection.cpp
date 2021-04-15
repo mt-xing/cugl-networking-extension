@@ -66,6 +66,9 @@ constexpr unsigned int SHUTDOWN_BLOCK = 10;
 /** Length of room IDs */
 constexpr uint8_t ROOM_LENGTH = 5;
 
+/** How long to wait before considering ourselves disconnected (ms) */
+constexpr size_t DISCONN_TIME = 5000;
+
 /** How long to wait between reconnection attempts (seconds) */
 constexpr size_t RECONN_GAP = 1;
 
@@ -112,6 +115,8 @@ std::vector<uint8_t> readBs(SLNet::BitStream& bts) {
 
 void CUNetworkConnection::c0StartupConn() {
 	peer = std::unique_ptr<SLNet::RakPeerInterface>(SLNet::RakPeerInterface::GetInstance());
+
+	peer->SetTimeoutTime(DISCONN_TIME, SLNet::UNASSIGNED_SYSTEM_ADDRESS);
 
 	peer->AttachPlugin(&(natPunchthroughClient));
 	natPunchServerAddress = std::make_unique<SLNet::SystemAddress>(
@@ -227,7 +232,7 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 		}
 	}
 
-	CULog("Host confirmed players; curr num players %d", peer->NumberOfConnections());
+	CULog("Host confirmed players; curr connections %d", peer->NumberOfConnections());
 }
 
 void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
@@ -295,7 +300,7 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 		status = NetStatus::ApiMismatch;
 	} else if (playerID != msgConverted[2]) {
 		CULogError("Invalid reconnection target; we are player ID %d but host thought we were %d",
-			*playerID, msgConverted[2]);
+			playerID.has_value() ? *playerID : -1, msgConverted[2]);
 		status = NetStatus::Disconnected;
 		success = false;
 	}
@@ -308,7 +313,10 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 	}
 	peer->CloseConnection(*natPunchServerAddress, true);
 
-	directSend({ *playerID, (uint8_t)(success ? 1 : 0) }, JoinRoom, *c.addr);
+	directSend({ 
+		static_cast<uint8_t>(playerID.has_value() ? *playerID : 0),
+		static_cast<uint8_t>(success ? 1 : 0)
+	}, JoinRoom, *c.addr);
 }
 
 void cugl::CUNetworkConnection::cr2HostGetClientResp(
@@ -454,8 +462,10 @@ void CUNetworkConnection::receive(
 							CULog("Lost connection to player %d", pID);
 							std::vector<uint8_t> disconnMsg{ pID };
 							h.peers.at(i) = nullptr;
-							numPlayers--;
-							connectedPlayers.reset(pID);
+							if (connectedPlayers.test(pID)) {
+								numPlayers--;
+								connectedPlayers.reset(pID);
+							}
 							send(disconnMsg, PlayerLeft);
 							return;
 						}
