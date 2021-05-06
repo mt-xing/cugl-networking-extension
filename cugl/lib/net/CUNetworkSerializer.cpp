@@ -79,6 +79,41 @@ void cugl::CUNetworkSerializer::write(char* v) {
 }
 WRITE_VEC(char*, String)
 
+void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
+	data.push_back(Json);
+	switch (j->type()) {
+	case cugl::JsonValue::Type::NullType: 
+		data.push_back(None);
+		break;
+	case cugl::JsonValue::Type::BoolType:
+		write(j->asBool());
+		break;
+	case cugl::JsonValue::Type::NumberType:
+		write(j->asDouble());
+		break;
+	case cugl::JsonValue::Type::StringType:
+		write(j->asString());
+		break;
+	case cugl::JsonValue::Type::ArrayType: {
+		data.push_back(Array);
+		data.push_back(j->_children.size());
+		for (auto& item : j->_children) {
+			write(item);
+		}
+		break;
+	}
+	case cugl::JsonValue::Type::ObjectType:
+		data.push_back(Json);
+		data.push_back(j->_children.size());
+		for (auto& item : j->_children) {
+			write(item->key());
+			write(item);
+		}
+		break;
+	}
+}
+WRITE_VEC(std::shared_ptr<cugl::JsonValue>, Json)
+
 const std::vector<uint8_t>& cugl::CUNetworkSerializer::serialize() {
 	return data;
 }
@@ -145,6 +180,46 @@ cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
 	}
 	DECODE_VEC(bool, BooleanTrue)
 	DECODE_VEC(std::string, String)
+	case Json: {
+		pos++;
+		switch (data[pos]) {
+		case None:
+			pos++;
+			return cugl::JsonValue::allocNull();
+		case BooleanTrue:
+			pos++;
+			return cugl::JsonValue::alloc(true);
+		case BooleanFalse:
+			pos++;
+			return cugl::JsonValue::alloc(false);
+		case Double:
+			return cugl::JsonValue::alloc(std::get<double>(read()));
+		case String:
+			return cugl::JsonValue::alloc(std::get<std::string>(read()));
+		case Array: {
+			auto& ret = cugl::JsonValue::allocArray();
+			pos++;
+			size_t size = std::get<size_t>(read());
+			for (size_t ii = 0; ii < size; ii++) {
+				ret->appendChild(std::get<std::shared_ptr<cugl::JsonValue>>(read()));
+			}
+			return ret;
+		}
+		case Json: {
+			auto& ret = cugl::JsonValue::allocObject();
+			pos++;
+			size_t size = std::get<size_t>(read());
+			for (size_t ii = 0; ii < size; ii++) {
+				std::string key = std::get<std::string>(read());
+				ret->appendChild(key, std::get<std::shared_ptr<cugl::JsonValue>>(read()));
+			}
+			return ret;
+		}
+		default:
+			throw std::domain_error("Illegal json");
+		}
+	}
+	DECODE_VEC(std::shared_ptr<cugl::JsonValue>, Json)
 	default:
 		throw std::domain_error("Illegal state of array; did you pass in a valid message?");
 	}

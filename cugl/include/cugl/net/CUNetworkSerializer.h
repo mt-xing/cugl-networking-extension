@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <variant>
+#include <cugl/assets/CUJsonValue.h>
 
 namespace cugl {
 	class CUNetworkSerializer {
@@ -43,6 +44,7 @@ void write(std::vector<T> v);
 		WRITE_METHODS(int64_t, i);
 		WRITE_METHODS(std::string, s);
 		WRITE_METHODS(char*, s);
+		WRITE_METHODS(std::shared_ptr<JsonValue>, j);
 
 #undef WRITE_METHODS
 
@@ -89,6 +91,7 @@ void write(std::vector<T> v);
 			int32_t,
 			int64_t,
 			std::string,
+			std::shared_ptr<JsonValue>,
 			std::vector<bool>,
 			std::vector<float>,
 			std::vector<double>,
@@ -96,7 +99,8 @@ void write(std::vector<T> v);
 			std::vector<uint64_t>,
 			std::vector<int32_t>,
 			std::vector<int64_t>,
-			std::vector<std::string>
+			std::vector<std::string>,
+			std::vector<std::shared_ptr<JsonValue>>
 		> Message;
 
 		/**
