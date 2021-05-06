@@ -131,6 +131,7 @@
     <ClInclude Include="..\..\include\cugl\math\polygon\CUSimpleTriangulator.h" />
     <ClInclude Include="..\..\include\cugl\math\polygon\cu_polygon.h" />
     <ClInclude Include="..\..\include\cugl\net\CUNetworkConnection.h" />
+    <ClInclude Include="..\..\include\cugl\net\CUNetworkSerializer.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUBoxObstacle.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUCapsuleObstacle.h" />
     <ClInclude Include="..\..\include\cugl\physics2\CUComplexObstacle.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="..\..\lib\math\polygon\CUSimpleExtruder.cpp" />
     <ClCompile Include="..\..\lib\math\polygon\CUSimpleTriangulator.cpp" />
     <ClCompile Include="..\..\lib\net\CUNetworkConnection.cpp" />
+    <ClCompile Include="..\..\lib\net\CUNetworkSerializer.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUBoxObstacle.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUCapsuleObstacle.cpp" />
     <ClCompile Include="..\..\lib\physics2\CUComplexObstacle.cpp" />

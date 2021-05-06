@@ -1,6 +1,7 @@
 #include "TestNetwork.h"
 
 #include <cugl/cugl.h>
+#include <cugl/net/CUNetworkSerializer.h>
 
 static uint8_t lastNum = 942;
 
@@ -13,6 +14,19 @@ TestNetwork::TestNetwork() {
 			0)
 		);
 	cugl::Input::activate<cugl::Keyboard>();
+
+	cugl::CUNetworkSerializer test;
+	test.write("hello world");
+	test.write(-123.4);
+	test.write((int64_t)5);
+	std::vector<std::string> testV = { "hi" };
+	test.write(testV);
+	const auto& d = test.serialize();
+	test.receive(d);
+	CULog("String msg: %s", std::get<std::string>(test.read()).c_str());
+	CULog("Float msg: %f", std::get<double>(test.read()));
+	CULog("Int msg: %d", std::get<int64_t>(test.read()));
+	CULog("String msg: %s", std::get<std::string>(test.read()).c_str());
 }
 
 void TestNetwork::step() {

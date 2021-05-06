@@ -70,10 +70,10 @@ constexpr uint8_t ROOM_LENGTH = 5;
 constexpr size_t DISCONN_TIME = 5000;
 
 /** How long to wait between reconnection attempts (seconds) */
-constexpr size_t RECONN_GAP = 1;
+constexpr size_t RECONN_GAP = 3;
 
 /** How long to wait before giving up on reconnection (seconds) */
-constexpr size_t RECONN_TIMEOUT = 10;
+constexpr size_t RECONN_TIMEOUT = 15;
 
 CUNetworkConnection::CUNetworkConnection(ConnectionConfig config)
 	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0), config(config) {
@@ -388,6 +388,7 @@ void cugl::CUNetworkConnection::attemptReconnect() {
 		}
 	}
 	lastReconnAttempt = now;
+	peer = nullptr;
 
 	c0StartupConn();
 }
@@ -399,7 +400,11 @@ void CUNetworkConnection::receive(
 	switch (status) {
 	case NetStatus::Reconnecting:
 		attemptReconnect();
-		return;
+		if (peer == nullptr) {
+			CULog("Peer null");
+			return;
+		}
+		break;
 	case NetStatus::Disconnected:
 	case NetStatus::GenericError:
 	case NetStatus::ApiMismatch:
