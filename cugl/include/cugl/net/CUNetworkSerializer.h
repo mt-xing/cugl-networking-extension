@@ -42,6 +42,7 @@ void write(std::vector<T> v);
 		WRITE_METHODS(int32_t, i);
 		WRITE_METHODS(int64_t, i);
 		WRITE_METHODS(std::string, s);
+		WRITE_METHODS(char*, s);
 
 #undef WRITE_METHODS
 
@@ -95,7 +96,7 @@ void write(std::vector<T> v);
 			std::vector<uint64_t>,
 			std::vector<int32_t>,
 			std::vector<int64_t>,
-			std::vector<std::string>,
+			std::vector<std::string>
 		> Message;
 
 		/**

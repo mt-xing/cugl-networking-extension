@@ -74,6 +74,10 @@ WRITE_NUMERIC_METHODS(int32_t, Int32)
 WRITE_NUMERIC_METHODS(int64_t, Int64)
 WRITE_VEC(std::string, String)
 
+void cugl::CUNetworkSerializer::write(char* v) {
+	write(std::string(v));
+}
+WRITE_VEC(char*, String)
 
 const std::vector<uint8_t>& cugl::CUNetworkSerializer::serialize() {
 	return data;
@@ -101,11 +105,12 @@ case Array + NAME: { \
 }
 
 #define DECODE_NUMERIC(T, NAME) \
-case NAME:\
+case NAME:{\
 	pos++;\
 	const T* r = reinterpret_cast<const T*>(data.data() + pos);\
 	pos += sizeof(T);\
 	return cugl::marshall(*r);\
+}\
 DECODE_VEC(T, NAME)
 
 cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
