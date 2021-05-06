@@ -5,6 +5,7 @@
 #include <sstream>
 
 enum DataType : uint8_t {
+	// Represents null in jsons
 	None,
 	BooleanTrue,
 	BooleanFalse,

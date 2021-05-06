@@ -13,25 +13,23 @@ namespace cugl {
 
 #define WRITE_METHODS(T, n) \
 /** \
- * Write a single value. \
- *  \
- * Values will be deserialized on other machines in the same order they were written in. \
- *  \
- * Pass the result of serialize() to the Network Connection to send all values \
- * buffered up to this point. \
- *  \
- * @param n The value to write \
+Write a single value. \
+<br>\
+Values will be deserialized on other machines in the same order they were written in. \
+<br>\
+Pass the result of serialize() to the Network Connection to send all values \
+buffered up to this point. \
+@param n The value to write \
  */ \
 void write(T n); \
 /** \
- * Write a vector of values. \
- *  \
- * Values will be deserialized on other machines in the same order they were written in. \
- *  \
- * Pass the result of serialize() to the Network Connection to send all values \
- * buffered up to this point. \
- *  \
- * @param v The vector to write \
+Write a vector of values. \
+<br>\
+Values will be deserialized on other machines in the same order they were written in. \
+<br>\
+Pass the result of serialize() to the Network Connection to send all values \
+buffered up to this point. \
+@param v The vector to write \
  */ \
 void write(std::vector<T> v);
 
@@ -136,7 +134,7 @@ void write(std::vector<T> v);
 		Message read();
 
 		/**
-		 * Clear the input buffer without writing any data
+		 * Clear the buffer and ignore any remaining data in it.
 		 */
 		void reset();
 	private:
