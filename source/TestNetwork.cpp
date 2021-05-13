@@ -16,22 +16,21 @@ TestNetwork::TestNetwork() {
 	cugl::Input::activate<cugl::Keyboard>();
 
 
-
-	cugl::CUNetworkSerializer test;
+	//cugl::CUNetworkSerializer test;
 	//test.write("hello world");
 	//test.write(-123.4);
 	//test.write((int64_t)5);
-	std::vector<std::string> testV = { "hi" };
-	test.write(testV);
+	//std::vector<std::string> testV = { "hi" };
+	//test.write(testV);
 
-	std::vector<uint8_t> d(test.serialize());
+	//std::vector<uint8_t> d(test.serialize());
 	
-	cugl::CUNetworkDeserializer test2;
-	test2.receive(d);
+	//cugl::CUNetworkDeserializer test2;
+	//test2.receive(d);
 	//CULog("String msg: %s", std::get<std::string>(test2.read()).c_str());
 	//CULog("Float msg: %f", std::get<double>(test2.read()));
 	//CULog("Int msg: %d", std::get<int64_t>(test2.read()));
-	CULog("String msg: %s", std::get<std::vector<std::string>>(test2.read())[0].c_str());
+	//CULog("String msg: %s", std::get<std::vector<std::string>>(test2.read())[0].c_str());
 }
 
 void TestNetwork::step() {

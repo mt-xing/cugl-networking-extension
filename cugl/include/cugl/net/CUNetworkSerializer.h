@@ -14,9 +14,9 @@ namespace cugl {
 #define WRITE_METHODS(T, n) \
 /** \
 Write a single value. \
-<br>\
+<p>\
 Values will be deserialized on other machines in the same order they were written in. \
-<br>\
+<p>\
 Pass the result of serialize() to the Network Connection to send all values \
 buffered up to this point. \
 @param n The value to write \
@@ -24,9 +24,9 @@ buffered up to this point. \
 void write(T n); \
 /** \
 Write a vector of values. \
-<br>\
+<p>\
 Values will be deserialized on other machines in the same order they were written in. \
-<br>\
+<p>\
 Pass the result of serialize() to the Network Connection to send all values \
 buffered up to this point. \
 @param v The vector to write \
