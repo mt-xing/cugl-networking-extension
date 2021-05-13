@@ -43,7 +43,7 @@ void cugl::CUNetworkSerializer::write(std::string s) {
 #define WRITE_VEC(T, TYPE) \
 void cugl::CUNetworkSerializer::write(std::vector<T> v) {\
 	data.push_back(Array + TYPE); \
-	data.push_back(v.size()); \
+	write(v.size()); \
 	for (auto& e : v) {	\
 			write(e); \
 	}\
@@ -73,12 +73,12 @@ WRITE_NUMERIC_METHODS(uint32_t, UInt32)
 WRITE_NUMERIC_METHODS(uint64_t, UInt64)
 WRITE_NUMERIC_METHODS(int32_t, Int32)
 WRITE_NUMERIC_METHODS(int64_t, Int64)
+WRITE_VEC(char*, String)
 WRITE_VEC(std::string, String)
 
 void cugl::CUNetworkSerializer::write(char* v) {
 	write(std::string(v));
 }
-WRITE_VEC(char*, String)
 
 void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
 	data.push_back(Json);
@@ -97,7 +97,7 @@ void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
 		break;
 	case cugl::JsonValue::Type::ArrayType: {
 		data.push_back(Array);
-		data.push_back(j->_children.size());
+		write(j->_children.size());
 		for (auto& item : j->_children) {
 			write(item);
 		}
@@ -105,7 +105,7 @@ void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
 	}
 	case cugl::JsonValue::Type::ObjectType:
 		data.push_back(Json);
-		data.push_back(j->_children.size());
+		write(j->_children.size());
 		for (auto& item : j->_children) {
 			write(item->key());
 			write(item);
