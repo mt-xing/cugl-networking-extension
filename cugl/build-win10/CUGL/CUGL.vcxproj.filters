@@ -662,6 +662,9 @@
     <ClInclude Include="..\..\include\cugl\net\CUNetworkSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\lib\test\TCUSerializerTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\cJSON\cJSON.c">
@@ -1067,6 +1070,9 @@
       <Filter>Source Files\net</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lib\net\CUNetworkSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lib\test\TCUSerializerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

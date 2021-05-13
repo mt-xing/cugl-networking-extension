@@ -194,6 +194,7 @@
     <ClInclude Include="..\..\include\poly2tri\sweep\sweep.h" />
     <ClInclude Include="..\..\include\poly2tri\sweep\sweep_context.h" />
     <ClInclude Include="..\..\lib\base\platform\CUDisplay-impl.h" />
+    <ClInclude Include="..\..\lib\test\TCUSerializerTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\external\cJSON\cJSON.c" />
@@ -327,6 +328,7 @@
     <ClCompile Include="..\..\lib\scene2\ui\CUProgressBar.cpp" />
     <ClCompile Include="..\..\lib\scene2\ui\CUSlider.cpp" />
     <ClCompile Include="..\..\lib\scene2\ui\CUTextField.cpp" />
+    <ClCompile Include="..\..\lib\test\TCUSerializerTest.cpp" />
     <ClCompile Include="..\..\lib\util\CUDebug.cpp" />
     <ClCompile Include="..\..\lib\util\CUFiletools.cpp" />
     <ClCompile Include="..\..\lib\util\CUStrings.cpp" />
