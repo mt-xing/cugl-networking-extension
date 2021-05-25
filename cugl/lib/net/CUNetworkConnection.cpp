@@ -315,6 +315,9 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 		maxPlayers = msgConverted[1];
 		playerID = msgConverted[2];
 		status = NetStatus::Connected;
+
+		lastReconnAttempt.reset();
+		disconnTime.reset();
 	}
 	peer->CloseConnection(*natPunchServerAddress, true);
 
