@@ -387,6 +387,12 @@ void cugl::CUNetworkConnection::attemptReconnect() {
 			return;
 		}
 	}
+
+	CULog("Attempting reconnection");
+
+	peer->Shutdown(0);
+	SLNet::RakPeerInterface::DestroyInstance(peer.release());
+	
 	lastReconnAttempt = now;
 	peer = nullptr;
 
@@ -490,11 +496,11 @@ void CUNetworkConnection::receive(
 						switch (status) {
 						case NetStatus::Pending:
 							status = NetStatus::GenericError;
-							break;
+							return;
 						case NetStatus::Connected:
 							status = NetStatus::Reconnecting;
 							disconnTime = time(nullptr);
-							break;
+							return;
 						case NetStatus::Reconnecting:
 						case NetStatus::Disconnected:
 						case NetStatus::RoomNotFound:
