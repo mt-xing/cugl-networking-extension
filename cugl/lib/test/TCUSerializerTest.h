@@ -8,6 +8,8 @@ namespace cugl {
 	void simpleTest();
 
 	void testNumericTypes();
+
+	void testStrings();
 }
 
 #endif

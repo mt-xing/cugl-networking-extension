@@ -6,6 +6,7 @@
 void cugl::serializerUnitTest() {
 	cugl::simpleTest();
 	cugl::testNumericTypes();
+	cugl::testStrings();
 }
 
 void cugl::simpleTest() {
@@ -31,7 +32,8 @@ void cugl::simpleTest() {
 
 void cugl::testNumericTypes() {
 	std::vector<uint32_t> u32 = {
-		0,1,2,3,4,5,13092285,std::numeric_limits<uint32_t>::min(),std::numeric_limits<uint32_t>::max()
+		0,1,2,3,4,5,13092285,
+		std::numeric_limits<uint32_t>::min(), std::numeric_limits<uint32_t>::max()
 	};
 	std::vector<int32_t> s32 = {
 		-1,0,1,2,3,4,5,10,234523423,std::numeric_limits<int32_t>::min(),std::numeric_limits<int32_t>::max()
@@ -43,7 +45,7 @@ void cugl::testNumericTypes() {
 		-1,0,1,2,3,4,5,10,234523423,std::numeric_limits<int64_t>::min(),std::numeric_limits<int64_t>::max()
 	};
 	std::vector<float> f = {
-		-1,0,1,2,3,4,1.1,0.1,2324.23423,-23422,4393,-34534.3453,-0.0000001,
+		-1,0,1,2,3,4,1.1f,0.1f,2324.23423f,-23422,4393,-34534.3453f,-0.000001f,
 		std::numeric_limits<float>::min(),
 		std::numeric_limits<float>::max(),
 		std::numeric_limits<float>::lowest(),
@@ -98,4 +100,7 @@ void cugl::testNumericTypes() {
 	for (auto& e : d) {
 		CUAssertAlwaysLog(e == std::get<double>(test2.read()), "double test");
 	}
+}
+
+void cugl::testStrings() {
 }
