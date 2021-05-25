@@ -2,7 +2,7 @@
 #define __T_CU_SERIALIZER_TEST_H__
 
 namespace cugl {
-	/** Master unit test that invokes all others in this module */
+	/** Main unit test that invokes all others in this module */
 	void serializerUnitTest();
 
 	void simpleTest();
@@ -10,6 +10,10 @@ namespace cugl {
 	void testNumericTypes();
 
 	void testStrings();
+
+	void testVectors();
+
+	void testJson();
 }
 
 #endif

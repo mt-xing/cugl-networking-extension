@@ -7,6 +7,8 @@ void cugl::serializerUnitTest() {
 	cugl::simpleTest();
 	cugl::testNumericTypes();
 	cugl::testStrings();
+	cugl::testVectors();
+	cugl::testJson();
 }
 
 void cugl::simpleTest() {
@@ -103,4 +105,65 @@ void cugl::testNumericTypes() {
 }
 
 void cugl::testStrings() {
+	std::vector<std::string> tests = {
+		"hello world", "ABCdefg", "", "e984892fjp;aw4980t49p8hht3w\n\nw4wer\t\t98wr98h894",
+		"OIEOIRH$)(hrwhtWH$(H(HT$*(YHRH92)(RU#**(YHRT(*#(T$twert934whiureyif9f\x00vvdi"
+	};
+
+	cugl::CUNetworkSerializer test;
+	for (auto& e : tests) {
+		test.write(e);
+	}
+	std::vector<uint8_t> dd(test.serialize());
+	cugl::CUNetworkDeserializer test2;
+	test2.receive(dd);
+	for (auto& e : tests) {
+		CUAssertAlwaysLog(e == std::get<std::string>(test2.read()), "string test");
+	}
+}
+
+void cugl::testVectors() {
+	std::vector<std::vector<float>> fv = {
+		{1.0f, 0.0f, 2.1f, 1.33f},
+		{2.0f, 0.0f, -2.0f, 193.f},
+		{9999.f, 0.001f,2234.f, 0.0f, 1.0f}
+	};
+	std::vector<std::vector<std::string>> fs = {
+		{"hi", "bye", "boo"},
+		{"1", "", "092530e9w(*H(*H(*"},
+		{},
+		{"2340jr09828930hjr892hr9823h98r2h98r29r34"}
+	};
+
+	cugl::CUNetworkSerializer test;
+	for (auto& e : fv) {
+		test.write(e);
+	}
+	for (auto& e : fs) {
+		test.write(e);
+	}
+
+	std::vector<uint8_t> dd(test.serialize());
+	cugl::CUNetworkDeserializer test2;
+	test2.receive(dd);
+	for (auto& e : fv) {
+		CUAssertAlwaysLog(e == std::get < std::vector<float> > (test2.read()), "float vector test");
+	}
+	for (auto& e : fs) {
+		CUAssertAlwaysLog(e == std::get < std::vector<std::string> >(test2.read()), "string vector test");
+	}
+}
+
+void cugl::testJson() {
+	cugl::JsonValue v;
+	v.initWithJson("{\"a\":1.222,\"b\":true,\"c\":false,\"d\":null,\"e\":[1,2,3],\"f\":[1,2,\"false\",true,null],\"g\":{\"zzz\":1,\"xxx\":\"why\",\"yyy\":true,\"www\":null,\"aaa\":[1,2,3,false]},\"h\":\"hello world this is an annoying json\"}");
+	
+	cugl::CUNetworkSerializer test;
+	test.write(std::make_shared<cugl::JsonValue>(v));
+	std::vector<uint8_t> dd(test.serialize());
+	cugl::CUNetworkDeserializer test2;
+	test2.receive(dd);
+
+	// This test is quite fragile because there's no guarantees JSONs stringify in the same key order
+	CUAssertAlwaysLog(v.toString() == std::get < std::shared_ptr<cugl::JsonValue> >(test2.read())->toString(), "Json test");
 }
