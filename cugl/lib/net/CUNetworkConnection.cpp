@@ -321,7 +321,7 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 	directSend({ 
 		static_cast<uint8_t>(playerID.has_value() ? *playerID : 0),
 		static_cast<uint8_t>(success ? 1 : 0)
-	}, JoinRoom, *c.addr);
+	}, Reconnect, *c.addr);
 }
 
 void cugl::CUNetworkConnection::cr2HostGetClientResp(
