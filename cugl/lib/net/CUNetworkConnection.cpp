@@ -247,6 +247,7 @@ void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::ve
 		playerID = msgConverted[2];
 		status = NetStatus::Connected;
 	}
+
 	peer->CloseConnection(*natPunchServerAddress, true);
 
 	directSend({ *playerID, (uint8_t)(apiMatch ? 1 : 0) }, JoinRoom, *c.addr);
@@ -397,6 +398,7 @@ void cugl::CUNetworkConnection::attemptReconnect() {
 	peer = nullptr;
 
 	c0StartupConn();
+	peer->SetMaximumIncomingConnections(1);
 }
 
 
@@ -482,6 +484,10 @@ void CUNetworkConnection::receive(
 								connectedPlayers.reset(pID);
 							}
 							send(disconnMsg, PlayerLeft);
+
+							if (peer->GetConnectionState(packet->systemAddress) == SLNet::IS_CONNECTED) {
+								peer->CloseConnection(packet->systemAddress, true);
+							}
 							return;
 						}
 					}
