@@ -44,8 +44,8 @@ void cugl::CUNetworkSerializer::write(std::string s) {
 void cugl::CUNetworkSerializer::write(std::vector<T> v) {\
 	data.push_back(Array + TYPE); \
 	write(v.size()); \
-	for (auto& e : v) {	\
-			write(e); \
+	for (size_t i = 0; i < v.size(); i++) {	\
+			write(v[i]); \
 	}\
 }
 
@@ -198,7 +198,7 @@ cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
 		case String:
 			return cugl::JsonValue::alloc(std::get<std::string>(read()));
 		case Array: {
-			auto& ret = cugl::JsonValue::allocArray();
+			auto ret = cugl::JsonValue::allocArray();
 			pos++;
 			size_t size = std::get<size_t>(read());
 			for (size_t ii = 0; ii < size; ii++) {
@@ -207,7 +207,7 @@ cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
 			return ret;
 		}
 		case Json: {
-			auto& ret = cugl::JsonValue::allocObject();
+			auto ret = cugl::JsonValue::allocObject();
 			pos++;
 			size_t size = std::get<size_t>(read());
 			for (size_t ii = 0; ii < size; ii++) {
