@@ -73,7 +73,7 @@ void write(std::vector<T> v);
 		 * the next call to this method will still contain all the contents written in this call.
 		 * 
 		 * Contains all values written to this object via calls to write(...) since the
-		 * last call to this method.
+		 * last call to reset().
 		 * 
 		 * The contents of the returned vector should be treated as opaque. Only
 		 * read the output via use of the CUNetworkDeserializer class.
