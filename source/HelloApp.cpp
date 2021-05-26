@@ -174,7 +174,10 @@ void HelloApp::buildScene() {
 			// Or you can choose to use NetworkSerializer as shown down in update()
 			net->send({ 0 });
 			net->startGame();
-			gameInfo->setText("You are player " + static_cast<int>(*net->getPlayerID()));
+			std::ostringstream disp;
+			disp << "You are player ";
+			disp << static_cast<int>(*net->getPlayerID());
+			gameInfo->setText(disp.str());
 		}
 		});
 	hostStartBtn->activate();
@@ -207,7 +210,7 @@ void HelloApp::buildScene() {
 	auto gameDesc = scene2::Label::alloc("Click the cookie to make the number go up. That's it. That's the game.", font);
 	gameDesc->setPosition(100, 300);
 	view4Game->addChild(gameDesc);
-	auto gameBtn = scene2::Button::alloc(scene2::Label::alloc("The Cookie (click me)", font));
+	auto gameBtn = scene2::Button::alloc(scene2::Label::alloc("THE COOKIE (click me)", font));
 	gameBtn->setPosition(100, 250);
 	gameBtn->addListener([&](const std::string& name, bool down) {
 		if (down && view4Game->isVisible()) {
@@ -347,7 +350,11 @@ void HelloApp::update(float timestep) {
 			if (msg.size() == 1 && msg[0] == 0 && view3Client->isVisible()) {
 				view3Client->setVisible(false);
 				view4Game->setVisible(true);
-				gameInfo->setText("You are player " + static_cast<int>(*net->getPlayerID()));
+
+				std::ostringstream disp;
+				disp << "You are player ";
+				disp << static_cast<int>(*net->getPlayerID());
+				gameInfo->setText(disp.str());
 				return;
 			}
 
