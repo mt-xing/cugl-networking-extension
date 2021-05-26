@@ -24,8 +24,8 @@
 //
 //      3. This notice may not be removed or altered from any source distribution.
 //
-//  Author: Walker White
-//  Version: 1/8/17
+//  Author: Michael Xing
+//  Version: 5/25/2021
 //
 // Include the class header, which includes all of the CUGL classes
 #include "HelloApp.h"

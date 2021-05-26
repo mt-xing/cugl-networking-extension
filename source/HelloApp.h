@@ -24,14 +24,12 @@
 //
 //      3. This notice may not be removed or altered from any source distribution.
 //
-//  Author: Walker White
-//  Version: 1/8/17
+//  Author: Michael Xing
+//  Version: 5/25/2021
 //
 #ifndef __HELLO_APP_H__
 #define __HELLO_APP_H__
 #include <cugl/cugl.h>
-
-#include "TestNetwork.h"
 
 /**
  * Class for a simple Hello World style application
