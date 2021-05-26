@@ -192,13 +192,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\HelloApp.h" />
-    <ClInclude Include="..\..\source\TestNetwork.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\HelloApp.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
-    <ClCompile Include="..\..\source\TestNetwork.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="HelloWorld.rc" />
