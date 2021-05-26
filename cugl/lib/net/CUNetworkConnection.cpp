@@ -221,12 +221,16 @@ void cugl::NetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet* 
 
 			if (h.started) {
 				// Reconnection attempt
-				directSend({ numPlayers, maxPlayers, pID, apiVer }, Reconnect, packet->systemAddress);
+				directSend({ static_cast<uint8_t>(numPlayers + 1), maxPlayers, pID, apiVer }, Reconnect, packet->systemAddress);
 			}
 			else {
 				// New player connection
 				maxPlayers++;
-				directSend({ numPlayers, maxPlayers, pID, apiVer }, JoinRoom, packet->systemAddress);
+				directSend(
+					{ static_cast<uint8_t>(numPlayers + 1), maxPlayers, pID, apiVer },
+					JoinRoom,
+					packet->systemAddress
+				);
 			}
 			break;
 		}
