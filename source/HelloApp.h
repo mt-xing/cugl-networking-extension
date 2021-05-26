@@ -41,21 +41,34 @@
  */
 class HelloApp : public cugl::Application {
 private:
+	constexpr static uint8_t NUM_PLAYERS = 3;
+
 	std::shared_ptr<TestNetwork> nn;
-protected:
-	/** The loaders to (synchronously) load in assets */
-	std::shared_ptr<cugl::AssetManager> _assets;
+	std::shared_ptr<cugl::NetworkConnection> net;
 
 	/** A scene graph, used to display our 2D scenes */
 	std::shared_ptr<cugl::Scene2> _scene;
 	/** A 3152 style SpriteBatch to render the scene */
 	std::shared_ptr<cugl::SpriteBatch>  _batch;
-	/** A reference to the logo, so that we can move it around */
-	std::shared_ptr<cugl::scene2::SceneNode>  _logo;
 
-	/** A countdown used to move the logo */
-	int  _countdown;
+	std::shared_ptr<cugl::scene2::SceneNode> view1Start;
+	std::shared_ptr<cugl::scene2::SceneNode> view2Host;
+	std::shared_ptr<cugl::scene2::SceneNode> view3Client;
+	std::shared_ptr<cugl::scene2::SceneNode> view4Game;
 
+	std::shared_ptr<cugl::Font> font;
+
+	std::shared_ptr<cugl::scene2::Label> hostInfo;
+	std::shared_ptr<cugl::scene2::Label> clientInfo;
+	std::shared_ptr<cugl::scene2::TextField> clientInput;
+
+	std::shared_ptr<cugl::scene2::Label> gameInfo;
+	std::array<std::shared_ptr<cugl::scene2::Label>, NUM_PLAYERS> gamePlayers;
+
+	std::array<double, NUM_PLAYERS> playerScores;
+
+
+	
 	/**
 	 * Internal helper to build the scene graph.
 	 *
@@ -75,7 +88,7 @@ public:
 	 * of initialization from the constructor allows main.cpp to perform
 	 * advanced configuration of the application before it starts.
 	 */
-	HelloApp() : Application(), _countdown(-1) {}
+	HelloApp() : Application() {}
 
 	/**
 	 * Disposes of this application, releasing all resources.

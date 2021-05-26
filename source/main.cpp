@@ -53,7 +53,7 @@ int main(int argc, char * argv[]) {
     /// SET YOUR APPLICATION PROPERTIES
     
     // The unique application name
-    app.setName("Hello World");
+    app.setName("Networking Demo");
     
     // The name of your studio (for organizing save files)
     app.setOrganization("GDIAC");

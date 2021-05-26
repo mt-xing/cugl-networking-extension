@@ -31,9 +31,7 @@
 #include "HelloApp.h"
 #include <cugl/base/CUBase.h>
 
-// Add support for simple random number generation
-#include <cstdlib>
-#include <ctime>
+#include <cstdio>
 
 using namespace cugl;
 // The number of frames before moving the logo to a new position
@@ -61,15 +59,15 @@ void HelloApp::onStartup() {
 	_batch = SpriteBatch::alloc();
 	setClearColor(Color4(229, 229, 229, 255));
 
-	// Create an asset manager to load all assets
-	_assets = AssetManager::alloc();
+	// In a larger app you'd probably want the matchmaking phase to be a whole separate
+	// scene from the main game itself, but for simplicity here we'll just make each thing
+	// a separate node and show / hide them as needed.
+	view1Start = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
+	view2Host = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
+	view3Client = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
+	view4Game = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
 
-	// You have to attach the individual loaders for each asset type
-	_assets->attach<Texture>(TextureLoader::alloc()->getHook());
-	_assets->attach<Font>(FontLoader::alloc()->getHook());
-
-	// This reads the given JSON file and uses it to load all other assets
-	_assets->loadDirectory("json/assets.json");
+	font = Font::alloc("montserrat.ttf", 16);
 
 	// Activate mouse or touch screen input as appropriate
 	// We have to do this BEFORE the scene, because the scene has a button
@@ -77,24 +75,12 @@ void HelloApp::onStartup() {
 	Input::activate<Touchscreen>();
 #else
 	Input::activate<Mouse>();
+	Input::activate<Keyboard>();
 #endif
 
 	// Build the scene from these assets
 	buildScene();
 	Application::onStartup();
-
-	// Report the safe area
-	Rect bounds = Display::get()->getSafeBounds();
-	CULog("Safe Area %sx%s", bounds.origin.toString().c_str(),
-		bounds.size.toString().c_str());
-
-	bounds = getSafeBounds();
-	CULog("Safe Area %sx%s", bounds.origin.toString().c_str(),
-		bounds.size.toString().c_str());
-
-	bounds = getDisplayBounds();
-	CULog("Full Area %sx%s", bounds.origin.toString().c_str(),
-		bounds.size.toString().c_str());
 
 	nn = std::make_shared<TestNetwork>();
 }
@@ -112,18 +98,114 @@ void HelloApp::onStartup() {
  */
 void HelloApp::onShutdown() {
 	// Delete all smart pointers
-	_logo = nullptr;
 	_scene = nullptr;
 	_batch = nullptr;
-	_assets = nullptr;
 
 	// Deativate input
 #if defined CU_TOUCH_SCREEN
 	Input::deactivate<Touchscreen>();
 #else
 	Input::deactivate<Mouse>();
+	Input::deactivate<Keyboard>();
 #endif
 	Application::onShutdown();
+}
+
+void HelloApp::buildScene() {
+
+	// Setup Start Phase
+	auto hostBtn = scene2::Button::alloc(scene2::Label::alloc("Host New Game", font));
+	hostBtn->setPosition(100, 200);
+	hostBtn->addListener([&](const std::string& name, bool down) {
+		if (down && view1Start->isVisible()) {
+			CULog("Clicked host");
+			view1Start->setVisible(false);
+			view2Host->setVisible(true);
+		}
+		});
+	hostBtn->activate();
+	view1Start->addChild(hostBtn);
+	auto clientBtn = scene2::Button::alloc(scene2::Label::alloc("Join Existing Game", font));
+	clientBtn->setPosition(100, 100);
+	clientBtn->addListener([&](const std::string& name, bool down) {
+		if (down && view1Start->isVisible()) {
+			CULog("Clicked client");
+			view1Start->setVisible(false);
+			view3Client->setVisible(true);
+		}
+		});
+	clientBtn->activate();
+	view1Start->addChild(clientBtn);
+
+	// Setup Host Phase
+	hostInfo = scene2::Label::alloc("Room ID: unassigned, # of Players: unknown", font);
+	hostInfo->setPosition(100, 200);
+	view2Host->addChild(hostInfo);
+	auto hostStartBtn = scene2::Button::alloc(scene2::Label::alloc("Start Game", font));
+	hostStartBtn->setPosition(100, 100);
+	hostStartBtn->addListener([&](const std::string& name, bool down) {
+		if (down && view2Host->isVisible()) {
+			CULog("Clicked start");
+			view2Host->setVisible(false);
+			view4Game->setVisible(true);
+		}
+		});
+	hostStartBtn->activate();
+	view2Host->addChild(hostStartBtn);
+
+	// Setup Client Phase
+	clientInfo = scene2::Label::alloc("Enter Room ID Below", font);
+	clientInfo->setPosition(100, 300);
+	view3Client->addChild(clientInfo);
+	clientInput = scene2::TextField::alloc("00000", font);
+	clientInput->setPosition(100, 200);
+	view3Client->addChild(clientInput);
+	auto clientStartBtn = scene2::Button::alloc(scene2::Label::alloc("Join", font));
+	clientStartBtn->setPosition(100, 100);
+	clientStartBtn->addListener([&](const std::string& name, bool down) {
+		if (down && view3Client->isVisible()) {
+			CULog("Clicked start");
+		}
+		});
+	clientStartBtn->activate();
+	view3Client->addChild(clientStartBtn);
+	
+	// Setup Game Phase
+	auto gameTitle = scene2::Label::alloc("Extreme Cookie Clicker Multiplayer Edition", font);
+	gameTitle->setPosition(100, 350);
+	view4Game->addChild(gameTitle);
+	auto gameDesc = scene2::Label::alloc("Click the cookie to make the number go up. That's it. That's the game.", font);
+	gameDesc->setPosition(100, 300);
+	view4Game->addChild(gameDesc);
+	auto gameBtn = scene2::Button::alloc(scene2::Label::alloc("The Cookie (click me)", font));
+	gameBtn->setPosition(100, 250);
+	gameBtn->addListener([&](const std::string& name, bool down) {
+		if (down && view4Game->isVisible()) {
+			CULog("Clicked cookie");
+		}
+		});
+	gameBtn->activate();
+	view4Game->addChild(gameBtn);
+	gameInfo = scene2::Label::alloc("You are player number <unknown>", font);
+	gameInfo->setPosition(100, 200);
+	view4Game->addChild(gameInfo);
+	for (size_t i = 0; i < NUM_PLAYERS; i++) {
+		gamePlayers[i] = scene2::Label::alloc("Player number clicked <unknown> times", font);
+		gamePlayers[i]->setPosition(100, 150 - i * 50);
+		view4Game->addChild(gamePlayers[i]);
+	}
+
+
+
+	// Add everything to the scene
+	view1Start->setVisible(true);
+	view2Host->setVisible(false);
+	view3Client->setVisible(false);
+	view4Game->setVisible(false);
+	_scene->addChild(view1Start);
+	_scene->addChild(view2Host);
+	_scene->addChild(view3Client);
+	_scene->addChild(view4Game);
 }
 
 /**
@@ -139,18 +221,7 @@ void HelloApp::onShutdown() {
  */
 void HelloApp::update(float timestep) {
 	nn->step();
-	if (_countdown == 0) {
-		// Move the logo about the screen
-		Size size = getDisplaySize();
-		size *= GAME_WIDTH / size.width;
-		float x = (float)(std::rand() % (int)(size.width / 2)) + size.width / 4;
-		float y = (float)(std::rand() % (int)(size.height / 2)) + size.height / 8;
-		_logo->setPosition(Vec2(x, y));
-		_countdown = TIME_STEP;
-	}
-	else {
-		_countdown--;
-	}
+	
 }
 
 /**
@@ -165,72 +236,4 @@ void HelloApp::update(float timestep) {
 void HelloApp::draw() {
 	// This takes care of begin/end
 	_scene->render(_batch);
-}
-
-/**
- * Internal helper to build the scene graph.
- *
- * Scene graphs are not required.  You could manage all scenes just like
- * you do in 3152.  However, they greatly simplify scene management, and
- * have become standard in most game engines.
- */
-void HelloApp::buildScene() {
-	Size  size = getDisplaySize();
-	float scale = GAME_WIDTH / size.width;
-	size *= scale;
-
-	// The logo is actually an image+label.  We need a parent node
-	_logo = scene2::SceneNode::alloc();
-
-	// Get the image and add it to the node.
-	std::shared_ptr<Texture> texture = _assets->get<Texture>("logo");
-	_logo = scene2::PolygonNode::allocWithTexture(texture);
-	_logo->setScale(0.2f); // Magic number to rescale asset
-
-	// Put the logo in the middle of the screen
-	_logo->setAnchor(Vec2::ANCHOR_CENTER);
-	_logo->setPosition(size.width / 2, size.height / 2);
-
-
-	// Create a button.  A button has an up image and a down image
-	std::shared_ptr<Texture> up = _assets->get<Texture>("close-normal");
-	std::shared_ptr<Texture> down = _assets->get<Texture>("close-selected");
-
-	Size bsize = up->getSize();
-	std::shared_ptr<scene2::Button> button = scene2::Button::alloc(scene2::PolygonNode::allocWithTexture(up),
-		scene2::PolygonNode::allocWithTexture(down));
-
-	// Create a callback function for the button
-	button->setName("close");
-	button->addListener([=](const std::string& name, bool down) {
-		// Only quit when the button is released
-		if (!down) {
-			CULog("Goodbye!");
-			this->quit();
-		}
-		});
-
-	// Find the safe area, adapting to the iPhone X
-	Rect safe = getSafeBounds();
-	safe.origin *= scale;
-	safe.size *= scale;
-
-	// Get the right and bottom offsets.
-	float bOffset = safe.origin.y;
-	float rOffset = (size.width) - (safe.origin.x + safe.size.width);
-
-	// Position the button in the bottom right corner
-	button->setAnchor(Vec2::ANCHOR_CENTER);
-	button->setPosition(size.width - (bsize.width + rOffset) / 2, (bsize.height + bOffset) / 2);
-
-	// Add the logo and button to the scene graph
-	_scene->addChild(_logo);
-	_scene->addChild(button);
-
-	// We can only activate a button AFTER it is added to a scene
-	button->activate();
-
-	// Start the logo countdown and C-style random number generator
-	_countdown = TIME_STEP;
-	std::srand((int)std::time(0));
 }
