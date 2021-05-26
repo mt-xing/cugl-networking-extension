@@ -70,240 +70,247 @@ $(function() {
 <div class="title">CUNetworkConnection.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#ifndef CU_NETWORK_CONNECTION_H</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#define CU_NETWORK_CONNECTION_H</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; </div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;bitset&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;optional&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;variant&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;unordered_set&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;slikenet/BitStream.h&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;slikenet/MessageIdentifiers.h&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;slikenet/NatPunchthroughClient.h&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>SLNet {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">class </span>RakPeerInterface;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;}</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacecugl.html">cugl</a> {</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html">   24</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classcugl_1_1_c_u_network_connection.html">CUNetworkConnection</a> {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#pragma region Setup</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">   31</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">ConnectionConfig</a> {</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#aa79150354d836db24ff8646ce94157d3">   33</a></span>&#160;            <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#aa79150354d836db24ff8646ce94157d3">punchthroughServerAddr</a>;</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a34b14e06b9c524721bcb0db6a7e2fb6b">   35</a></span>&#160;            uint16_t <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a34b14e06b9c524721bcb0db6a7e2fb6b">punchthroughServerPort</a>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a2cd0f0dd41fb5b01c4351544e0a5efed">   37</a></span>&#160;            uint32_t <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a2cd0f0dd41fb5b01c4351544e0a5efed">maxNumPlayers</a>;</div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a81a033b8e0b9893c6d89e84682c804d5">   39</a></span>&#160;            uint8_t <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a81a033b8e0b9893c6d89e84682c804d5">apiVersion</a>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">ConnectionConfig</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#aa79150354d836db24ff8646ce94157d3">punchthroughServerAddr</a>, uint16_t <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a34b14e06b9c524721bcb0db6a7e2fb6b">punchthroughServerPort</a>, uint32_t maxPlayers, uint8_t apiVer) {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                this-&gt;punchthroughServerAddr = <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#aa79150354d836db24ff8646ce94157d3">punchthroughServerAddr</a>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                this-&gt;punchthroughServerPort = <a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a34b14e06b9c524721bcb0db6a7e2fb6b">punchthroughServerPort</a>;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                this-&gt;maxNumPlayers = maxPlayers;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                this-&gt;apiVersion = apiVer;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        };</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a2f98ca8c26f6d07e1298674734deb923">   54</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a2f98ca8c26f6d07e1298674734deb923">CUNetworkConnection</a>(<a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">ConnectionConfig</a> config);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a8faf83f92287fb5739b247d10a73e4fc">   62</a></span>&#160;        <a class="code" href="classcugl_1_1_c_u_network_connection.html#a8faf83f92287fb5739b247d10a73e4fc">CUNetworkConnection</a>(<a class="code" href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">ConnectionConfig</a> config, std::string roomID);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#ac8bf77258c35f17c380e3bb5ce39ebdb">   65</a></span>&#160;        <a class="code" href="classcugl_1_1_c_u_network_connection.html#ac8bf77258c35f17c380e3bb5ce39ebdb">~CUNetworkConnection</a>();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#pragma region Main Networking Methods</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a43b3df667058aea731c77b61e2b27b9d">   76</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a43b3df667058aea731c77b61e2b27b9d">send</a>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#acc32c9c2ffd876246de108cb5314f07b">   88</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#acc32c9c2ffd876246de108cb5314f07b">receive</a>(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp;)&gt;&amp; dispatcher);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#pragma region State Management</span></div>
-<div class="line"><a name="l00096"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a5bb2a317b42b19b6276f0eb3660a5965">   96</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a5bb2a317b42b19b6276f0eb3660a5965">startGame</a>();</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a007e4e98e785b2fc90e17c5e93c25021">  101</a></span>&#160;        <span class="keyword">enum class</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a007e4e98e785b2fc90e17c5e93c25021">NetStatus</a> {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            <span class="comment">// No connection</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            Disconnected,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            <span class="comment">// If host, waiting on Room ID from server; if client, waiting on Player ID from host</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            Pending,</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="comment">// If host, accepting connections; if client, successfully connected to host</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            Connected,</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="comment">// Lost connection, attempting to reconnect (failure causes disconnection)</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            Reconnecting,</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="comment">// Room ID does not exist, or room is already full</span></div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            RoomNotFound,</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <span class="comment">// API version numbers do not match between host, client, and Punchthrough Server</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            <span class="comment">// (when running your own punchthrough server, you can specify a minimum API version</span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            <span class="comment">// that your server will require, or else it will reject the connection.</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            <span class="comment">// If you&#39;re using my demo server, that minimum is 0.</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            ApiMismatch,</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <span class="comment">// Something went wrong and IDK what :(</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            GenericError</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        };</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor">#pragma region Getters</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a819d39018b202c2a615500391a703a98">  126</a></span>&#160;        <a class="code" href="classcugl_1_1_c_u_network_connection.html#a007e4e98e785b2fc90e17c5e93c25021">NetStatus</a> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a819d39018b202c2a615500391a703a98">getStatus</a>();</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
-<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a3057c0cffab70545e5e69449f9a97dc9">  135</a></span>&#160;        std::optional&lt;uint8_t&gt; <a class="code" href="classcugl_1_1_c_u_network_connection.html#a3057c0cffab70545e5e69449f9a97dc9">getPlayerID</a>() { <span class="keywordflow">return</span> playerID; }</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#afa9e87199820009fcbba81f82105f829">  145</a></span>&#160;        std::string <a class="code" href="classcugl_1_1_c_u_network_connection.html#afa9e87199820009fcbba81f82105f829">getRoomID</a>() { <span class="keywordflow">return</span> roomID; }</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160; </div>
-<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a831ff346441b616970be9521fd9bf326">  154</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a831ff346441b616970be9521fd9bf326">isPlayerActive</a>(uint8_t playerID) { <span class="keywordflow">return</span> connectedPlayers.test(playerID); }</div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  CUNetworkConnection.h</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//  Author: Michael Xing</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//  Version: 5/25/2021</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#ifndef CU_NETWORK_CONNECTION_H</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#define CU_NETWORK_CONNECTION_H</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;bitset&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;ctime&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;functional&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;thread&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;optional&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;variant&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;unordered_set&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;slikenet/BitStream.h&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;slikenet/MessageIdentifiers.h&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;slikenet/NatPunchthroughClient.h&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// Forward declarations</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>SLNet {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">class </span>RakPeerInterface;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacecugl.html">cugl</a> {</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html">   50</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classcugl_1_1_network_connection.html">NetworkConnection</a> {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#pragma region Setup</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structcugl_1_1_network_connection_1_1_connection_config.html">   60</a></span>&#160;        <span class="keyword">struct </span><a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html">ConnectionConfig</a> {</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9f759c18c0843ee5561a87015496bfa0">   62</a></span>&#160;            <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9f759c18c0843ee5561a87015496bfa0">punchthroughServerAddr</a>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa0e3ea6b5ffba75a37699b66a2dedc32">   64</a></span>&#160;            uint16_t <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa0e3ea6b5ffba75a37699b66a2dedc32">punchthroughServerPort</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9b92ac1f6bfd8469e97479de6843e964">   66</a></span>&#160;            uint32_t <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9b92ac1f6bfd8469e97479de6843e964">maxNumPlayers</a>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa46b1429aabacce9ebe9c0ff6e4f63f2">   72</a></span>&#160;            uint8_t <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa46b1429aabacce9ebe9c0ff6e4f63f2">apiVersion</a>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160; </div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html">ConnectionConfig</a>(<span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9f759c18c0843ee5561a87015496bfa0">punchthroughServerAddr</a>, uint16_t <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa0e3ea6b5ffba75a37699b66a2dedc32">punchthroughServerPort</a>, uint32_t maxPlayers, uint8_t apiVer) {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                this-&gt;punchthroughServerAddr = <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#a9f759c18c0843ee5561a87015496bfa0">punchthroughServerAddr</a>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                this-&gt;punchthroughServerPort = <a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html#aa0e3ea6b5ffba75a37699b66a2dedc32">punchthroughServerPort</a>;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                this-&gt;maxNumPlayers = maxPlayers;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                this-&gt;apiVersion = apiVer;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            }</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        };</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160; </div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a9d4ccf35398b14f3f62dfe2899029000">   94</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classcugl_1_1_network_connection.html#a9d4ccf35398b14f3f62dfe2899029000">NetworkConnection</a>(<a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html">ConnectionConfig</a> config);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
+<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a2df34f2edc0479e158437ffc1ad53205">  110</a></span>&#160;        <a class="code" href="classcugl_1_1_network_connection.html#a2df34f2edc0479e158437ffc1ad53205">NetworkConnection</a>(<a class="code" href="structcugl_1_1_network_connection_1_1_connection_config.html">ConnectionConfig</a> config, std::string roomID);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#af352bba61aa10bbafc7bd24688172bc7">  113</a></span>&#160;        <a class="code" href="classcugl_1_1_network_connection.html#af352bba61aa10bbafc7bd24688172bc7">~NetworkConnection</a>();</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="preprocessor">#pragma region Main Networking Methods</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a055cae3937cbd32bf8a4d38eac95829a">  129</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_network_connection.html#a055cae3937cbd32bf8a4d38eac95829a">send</a>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a0b3beae1a8ac4e643e1123a8ac2bf188">  145</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_network_connection.html#a0b3beae1a8ac4e643e1123a8ac2bf188">receive</a>(<span class="keyword">const</span> std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp;)&gt;&amp; dispatcher);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="preprocessor">#pragma region State Management</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a192d0a28860abefaff36bb9836d63b63">  154</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_network_connection.html#a192d0a28860abefaff36bb9836d63b63">startGame</a>();</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a0b0f8cd315d889bf76c116c8ba60667a">  157</a></span>&#160;        uint8_t <a class="code" href="classcugl_1_1_c_u_network_connection.html#a0b0f8cd315d889bf76c116c8ba60667a">getNumPlayers</a>() { <span class="keywordflow">return</span> numPlayers; }</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="classcugl_1_1_c_u_network_connection.html#a6b7a35b5db9a13c2db51a8571d59374f">  161</a></span>&#160;        uint8_t <a class="code" href="classcugl_1_1_c_u_network_connection.html#a6b7a35b5db9a13c2db51a8571d59374f">getTotalPlayers</a>() { <span class="keywordflow">return</span> maxPlayers;  }</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;        std::unique_ptr&lt;SLNet::RakPeerInterface&gt; peer;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160; </div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="preprocessor">#pragma region State</span></div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <a class="code" href="classcugl_1_1_c_u_network_connection.html#a007e4e98e785b2fc90e17c5e93c25021">NetStatus</a> status;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <span class="keyword">const</span> uint8_t apiVer;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        uint8_t numPlayers;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        uint8_t maxPlayers;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        std::optional&lt;uint8_t&gt; playerID;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;        std::string roomID;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;        std::bitset&lt;256&gt; connectedPlayers;</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="preprocessor">#pragma region Punchthrough</span></div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        std::unique_ptr&lt;SLNet::SystemAddress&gt; natPunchServerAddress;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        SLNet::NatPunchthroughClient natPunchthroughClient;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="preprocessor">#pragma region Connection Data Structures</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <span class="keyword">struct </span>HostPeers {</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;            <span class="keywordtype">bool</span> started;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            uint32_t maxPlayers;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            std::vector&lt;std::unique_ptr&lt;SLNet::SystemAddress&gt;&gt; peers;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            std::unordered_set&lt;std::string&gt; toReject;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160; </div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            HostPeers() : started(false), maxPlayers(6) {</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                <span class="keywordflow">for</span> (uint8_t i = 0; i &lt; 5; i++) {</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                    peers.push_back(<span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;                }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            };</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            <span class="keyword">explicit</span> HostPeers(uint32_t max) : started(false), maxPlayers(max) {</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;                <span class="keywordflow">for</span> (uint8_t i = 0; i &lt; max - 1; i++) {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;                    peers.push_back(<span class="keyword">nullptr</span>);</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;                }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            };</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        };</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        <span class="keyword">struct </span>ClientPeer {</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;            std::unique_ptr&lt;SLNet::SystemAddress&gt; addr;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            std::string room;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160; </div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;            <span class="keyword">explicit</span> ClientPeer(std::string roomID) { room = std::move(roomID); }</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        };</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160; </div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        std::variant&lt;HostPeers, ClientPeer&gt; remotePeer;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="keyword">enum</span> CustomDataPackets {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;            Standard = 0,</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            AssignedRoom,</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <span class="comment">// Request to join, or success</span></div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            JoinRoom,</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            <span class="comment">// Couldn&#39;t find room</span></div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            JoinRoomFail,</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            Reconnect,</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            PlayerJoined,</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            PlayerLeft,</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            StartGame</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        };</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160; </div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;<span class="preprocessor">#pragma region Connection Handshake</span></div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        ConnectionConfig config;</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160; </div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="comment">/*</span></div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">        ===============================</span></div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;<span class="comment">         Connection Handshake Overview</span></div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">        ===============================</span></div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="comment">                Host        Punchthrough Server         Client</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="comment">                ====        ===================         ======</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;<span class="comment">        c0      Connect -------------&gt;</span></div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">        ch1       &lt;--------- Conn Req Accepted</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">                  &lt;--------- Room ID Assigned</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;<span class="comment">        ch2     Accept Req</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;<span class="comment"></span> </div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">        c0                           &lt;----------------- Connect</span></div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;<span class="comment">                             Conn Req Accepted ------------&gt;</span></div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;<span class="comment">        cc1                          &lt;----------------- Try connect to host</span></div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">                  &lt;--------- Punch Succeeded --------------&gt;</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">        cc2                                             Save host address</span></div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">        cc3     Check hasRoom</span></div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;<span class="comment">                Connect -----------------------------------&gt;</span></div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;<span class="comment">        cc4       &lt;------------------------------------ Incoming connection</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment">        cc5     Request Accepted --------------------------&gt;</span></div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="comment">        cc6                                             Join Room</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;<span class="comment">        </span></div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">        */</span></div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="keywordtype">void</span> c0StartupConn();</div>
+<div class="line"><a name="l00159"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#ae2d66f6bc4a9a6eb67dd37e5717783f5">  159</a></span>&#160;        <span class="keyword">enum class</span> <a class="code" href="classcugl_1_1_network_connection.html#ae2d66f6bc4a9a6eb67dd37e5717783f5">NetStatus</a> {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            <span class="comment">// No connection</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            Disconnected,</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="comment">// If host, waiting on Room ID from server; if client, waiting on Player ID from host</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            Pending,</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="comment">// If host, accepting connections; if client, successfully connected to host</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            Connected,</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <span class="comment">// Lost connection, attempting to reconnect (failure causes disconnection)</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            Reconnecting,</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            <span class="comment">// Room ID does not exist, or room is already full</span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            RoomNotFound,</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;            <span class="comment">// API version numbers do not match between host, client, and Punchthrough Server</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;            <span class="comment">// (when running your own punchthrough server, you can specify a minimum API version</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            <span class="comment">// that your server will require, or else it will reject the connection.</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            <span class="comment">// If you&#39;re using my demo server, that minimum is 0.</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            ApiMismatch,</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            <span class="comment">// Something went wrong and IDK what :(</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;            GenericError</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        };</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="preprocessor">#pragma region Getters</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a666a90f363ca4d5853defa022bd2a131">  184</a></span>&#160;        <a class="code" href="classcugl_1_1_network_connection.html#ae2d66f6bc4a9a6eb67dd37e5717783f5">NetStatus</a> <a class="code" href="classcugl_1_1_network_connection.html#a666a90f363ca4d5853defa022bd2a131">getStatus</a>();</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160; </div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#afb4f9a1d682fca562b268a07825ecf69">  193</a></span>&#160;        std::optional&lt;uint8_t&gt; <a class="code" href="classcugl_1_1_network_connection.html#afb4f9a1d682fca562b268a07825ecf69">getPlayerID</a>() { <span class="keywordflow">return</span> playerID; }</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160; </div>
+<div class="line"><a name="l00203"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#ab5e0c89ac811a1178f26aa566ce244d0">  203</a></span>&#160;        std::string <a class="code" href="classcugl_1_1_network_connection.html#ab5e0c89ac811a1178f26aa566ce244d0">getRoomID</a>() { <span class="keywordflow">return</span> roomID; }</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00212"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a8ee18ffb991143e6473face82fa4ce20">  212</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classcugl_1_1_network_connection.html#a8ee18ffb991143e6473face82fa4ce20">isPlayerActive</a>(uint8_t playerID) { <span class="keywordflow">return</span> connectedPlayers.test(playerID); }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160; </div>
+<div class="line"><a name="l00215"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#aa8e38aeecf4b26d25ca385772e7562f7">  215</a></span>&#160;        uint8_t <a class="code" href="classcugl_1_1_network_connection.html#aa8e38aeecf4b26d25ca385772e7562f7">getNumPlayers</a>() { <span class="keywordflow">return</span> numPlayers; }</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160; </div>
+<div class="line"><a name="l00219"></a><span class="lineno"><a class="line" href="classcugl_1_1_network_connection.html#a140781949f9389ffc58d7089d878e449">  219</a></span>&#160;        uint8_t <a class="code" href="classcugl_1_1_network_connection.html#a140781949f9389ffc58d7089d878e449">getTotalPlayers</a>() { <span class="keywordflow">return</span> maxPlayers;  }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160; </div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        std::unique_ptr&lt;SLNet::RakPeerInterface&gt; peer;</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="preprocessor">#pragma region State</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        <a class="code" href="classcugl_1_1_network_connection.html#ae2d66f6bc4a9a6eb67dd37e5717783f5">NetStatus</a> status;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keyword">const</span> uint8_t apiVer;</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        uint8_t numPlayers;</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        uint8_t maxPlayers;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        std::optional&lt;uint8_t&gt; playerID;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        std::string roomID;</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        std::bitset&lt;256&gt; connectedPlayers;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="preprocessor">#pragma region Punchthrough</span></div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        std::unique_ptr&lt;SLNet::SystemAddress&gt; natPunchServerAddress;</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        SLNet::NatPunchthroughClient natPunchthroughClient;</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160; </div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;<span class="preprocessor">#pragma region Connection Data Structures</span></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="keyword">struct </span>HostPeers {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="keywordtype">bool</span> started;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            uint32_t maxPlayers;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            std::vector&lt;std::unique_ptr&lt;SLNet::SystemAddress&gt;&gt; peers;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            std::unordered_set&lt;std::string&gt; toReject;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            HostPeers() : started(false), maxPlayers(6) {</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                <span class="keywordflow">for</span> (uint8_t i = 0; i &lt; 5; i++) {</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                    peers.push_back(<span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                }</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            };</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keyword">explicit</span> HostPeers(uint32_t max) : started(false), maxPlayers(max) {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                <span class="keywordflow">for</span> (uint8_t i = 0; i &lt; max - 1; i++) {</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                    peers.push_back(<span class="keyword">nullptr</span>);</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                }</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            };</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        };</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keywordtype">void</span> ch1HostConnServer(HostPeers&amp; h);</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordtype">void</span> ch2HostGetRoomID(HostPeers&amp; h, SLNet::BitStream&amp; bts);</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="keyword">struct </span>ClientPeer {</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            std::unique_ptr&lt;SLNet::SystemAddress&gt; addr;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            std::string room;</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160; </div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        <span class="keywordtype">void</span> cc1ClientConnServer(ClientPeer&amp; c);</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordtype">void</span> cc2ClientPunchSuccess(ClientPeer&amp; c, SLNet::Packet* packet);</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <span class="keywordtype">void</span> cc3HostReceivedPunch(HostPeers&amp; h, SLNet::Packet* packet);</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        <span class="keywordtype">void</span> cc4ClientReceiveHostConnection(ClientPeer&amp; c, SLNet::Packet* packet);</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordtype">void</span> cc5HostConfirmClient(HostPeers&amp; h, SLNet::Packet* packet);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        <span class="keywordtype">void</span> cc6ClientAssignedID(ClientPeer&amp; c, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        <span class="keywordtype">void</span> cc7HostGetClientData(HostPeers&amp; h, SLNet::Packet* packet, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <span class="keywordtype">void</span> cr1ClientReceivedInfo(ClientPeer&amp; c, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;        <span class="keywordtype">void</span> cr2HostGetClientResp(HostPeers&amp; h, SLNet::Packet* packet, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160; </div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            <span class="keyword">explicit</span> ClientPeer(std::string roomID) { room = std::move(roomID); }</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        };</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160; </div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        std::variant&lt;HostPeers, ClientPeer&gt; remotePeer;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160; </div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keyword">enum</span> CustomDataPackets {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            Standard = 0,</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            AssignedRoom,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="comment">// Request to join, or success</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            JoinRoom,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;            <span class="comment">// Couldn&#39;t find room</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            JoinRoomFail,</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            Reconnect,</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            PlayerJoined,</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            PlayerLeft,</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            StartGame</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        };</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        <span class="keywordtype">void</span> broadcast(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, SLNet::SystemAddress&amp; ignore,</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            CustomDataPackets packetType = Standard);</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_c_u_network_connection.html#a43b3df667058aea731c77b61e2b27b9d">send</a>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, CustomDataPackets packetType);</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="keywordtype">void</span> directSend(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, CustomDataPackets packetType, SLNet::SystemAddress dest);</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        std::optional&lt;time_t&gt; lastReconnAttempt;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        std::optional&lt;time_t&gt; disconnTime;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="preprocessor">#pragma region Connection Handshake</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        ConnectionConfig config;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160; </div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="comment">/*</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment">        ===============================</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment">         Connection Handshake Overview</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">        ===============================</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">                Host        Punchthrough Server         Client</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">                ====        ===================         ======</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">        c0      Connect -------------&gt;</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">        ch1       &lt;--------- Conn Req Accepted</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">                  &lt;--------- Room ID Assigned</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">        ch2     Accept Req</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment"></span> </div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;<span class="comment">        c0                           &lt;----------------- Connect</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;<span class="comment">                             Conn Req Accepted ------------&gt;</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment">        cc1                          &lt;----------------- Try connect to host</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="comment">                  &lt;--------- Punch Succeeded --------------&gt;</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;<span class="comment">        cc2                                             Save host address</span></div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;<span class="comment">        cc3     Check hasRoom</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;<span class="comment">                Connect -----------------------------------&gt;</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">        cc4       &lt;------------------------------------ Incoming connection</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">        cc5     Request Accepted --------------------------&gt;</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="comment">        cc6                                             Join Room</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="comment">        </span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">        */</span></div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160; </div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        <span class="keywordtype">void</span> attemptReconnect();</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        <span class="keywordtype">void</span> c0StartupConn();</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160; </div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <span class="keywordtype">void</span> ch1HostConnServer(HostPeers&amp; h);</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        <span class="keywordtype">void</span> ch2HostGetRoomID(HostPeers&amp; h, SLNet::BitStream&amp; bts);</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160; </div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    };</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;}</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160; </div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CU_NETWORK_CONNECTION_H</span></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html">cugl::CUNetworkConnection</a></div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:24</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a007e4e98e785b2fc90e17c5e93c25021"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a007e4e98e785b2fc90e17c5e93c25021">cugl::CUNetworkConnection::NetStatus</a></div><div class="ttdeci">NetStatus</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:101</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a0b0f8cd315d889bf76c116c8ba60667a"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a0b0f8cd315d889bf76c116c8ba60667a">cugl::CUNetworkConnection::getNumPlayers</a></div><div class="ttdeci">uint8_t getNumPlayers()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:157</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a2f98ca8c26f6d07e1298674734deb923"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a2f98ca8c26f6d07e1298674734deb923">cugl::CUNetworkConnection::CUNetworkConnection</a></div><div class="ttdeci">CUNetworkConnection(ConnectionConfig config)</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a3057c0cffab70545e5e69449f9a97dc9"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a3057c0cffab70545e5e69449f9a97dc9">cugl::CUNetworkConnection::getPlayerID</a></div><div class="ttdeci">std::optional&lt; uint8_t &gt; getPlayerID()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:135</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a43b3df667058aea731c77b61e2b27b9d"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a43b3df667058aea731c77b61e2b27b9d">cugl::CUNetworkConnection::send</a></div><div class="ttdeci">void send(const std::vector&lt; uint8_t &gt; &amp;msg)</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a5bb2a317b42b19b6276f0eb3660a5965"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a5bb2a317b42b19b6276f0eb3660a5965">cugl::CUNetworkConnection::startGame</a></div><div class="ttdeci">void startGame()</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a6b7a35b5db9a13c2db51a8571d59374f"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a6b7a35b5db9a13c2db51a8571d59374f">cugl::CUNetworkConnection::getTotalPlayers</a></div><div class="ttdeci">uint8_t getTotalPlayers()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:161</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a819d39018b202c2a615500391a703a98"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a819d39018b202c2a615500391a703a98">cugl::CUNetworkConnection::getStatus</a></div><div class="ttdeci">NetStatus getStatus()</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a831ff346441b616970be9521fd9bf326"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a831ff346441b616970be9521fd9bf326">cugl::CUNetworkConnection::isPlayerActive</a></div><div class="ttdeci">bool isPlayerActive(uint8_t playerID)</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:154</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_a8faf83f92287fb5739b247d10a73e4fc"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#a8faf83f92287fb5739b247d10a73e4fc">cugl::CUNetworkConnection::CUNetworkConnection</a></div><div class="ttdeci">CUNetworkConnection(ConnectionConfig config, std::string roomID)</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_ac8bf77258c35f17c380e3bb5ce39ebdb"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#ac8bf77258c35f17c380e3bb5ce39ebdb">cugl::CUNetworkConnection::~CUNetworkConnection</a></div><div class="ttdeci">~CUNetworkConnection()</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_acc32c9c2ffd876246de108cb5314f07b"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#acc32c9c2ffd876246de108cb5314f07b">cugl::CUNetworkConnection::receive</a></div><div class="ttdeci">void receive(const std::function&lt; void(const std::vector&lt; uint8_t &gt; &amp;)&gt; &amp;dispatcher)</div></div>
-<div class="ttc" id="aclasscugl_1_1_c_u_network_connection_html_afa9e87199820009fcbba81f82105f829"><div class="ttname"><a href="classcugl_1_1_c_u_network_connection.html#afa9e87199820009fcbba81f82105f829">cugl::CUNetworkConnection::getRoomID</a></div><div class="ttdeci">std::string getRoomID()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:145</div></div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        <span class="keywordtype">void</span> cc1ClientConnServer(ClientPeer&amp; c);</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="keywordtype">void</span> cc2ClientPunchSuccess(ClientPeer&amp; c, SLNet::Packet* packet);</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        <span class="keywordtype">void</span> cc3HostReceivedPunch(HostPeers&amp; h, SLNet::Packet* packet);</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <span class="keywordtype">void</span> cc4ClientReceiveHostConnection(ClientPeer&amp; c, SLNet::Packet* packet);</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        <span class="keywordtype">void</span> cc5HostConfirmClient(HostPeers&amp; h, SLNet::Packet* packet);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;        <span class="keywordtype">void</span> cc6ClientAssignedID(ClientPeer&amp; c, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        <span class="keywordtype">void</span> cc7HostGetClientData(HostPeers&amp; h, SLNet::Packet* packet, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        <span class="keywordtype">void</span> cr1ClientReceivedInfo(ClientPeer&amp; c, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="keywordtype">void</span> cr2HostGetClientResp(HostPeers&amp; h, SLNet::Packet* packet, <span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msgConverted);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="preprocessor">#pragma endregion</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="keywordtype">void</span> broadcast(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, SLNet::SystemAddress&amp; ignore,</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;            CustomDataPackets packetType = Standard);</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classcugl_1_1_network_connection.html#a055cae3937cbd32bf8a4d38eac95829a">send</a>(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, CustomDataPackets packetType);</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160; </div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="keywordtype">void</span> directSend(<span class="keyword">const</span> std::vector&lt;uint8_t&gt;&amp; msg, CustomDataPackets packetType, SLNet::SystemAddress dest);</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160; </div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;        std::optional&lt;time_t&gt; lastReconnAttempt;</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        std::optional&lt;time_t&gt; disconnTime;</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160; </div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        <span class="keywordtype">void</span> attemptReconnect();</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    };</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;}</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160; </div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CU_NETWORK_CONNECTION_H</span></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html"><div class="ttname"><a href="classcugl_1_1_network_connection.html">cugl::NetworkConnection</a></div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:50</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a055cae3937cbd32bf8a4d38eac95829a"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a055cae3937cbd32bf8a4d38eac95829a">cugl::NetworkConnection::send</a></div><div class="ttdeci">void send(const std::vector&lt; uint8_t &gt; &amp;msg)</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a0b3beae1a8ac4e643e1123a8ac2bf188"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a0b3beae1a8ac4e643e1123a8ac2bf188">cugl::NetworkConnection::receive</a></div><div class="ttdeci">void receive(const std::function&lt; void(const std::vector&lt; uint8_t &gt; &amp;)&gt; &amp;dispatcher)</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a140781949f9389ffc58d7089d878e449"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a140781949f9389ffc58d7089d878e449">cugl::NetworkConnection::getTotalPlayers</a></div><div class="ttdeci">uint8_t getTotalPlayers()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:219</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a192d0a28860abefaff36bb9836d63b63"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a192d0a28860abefaff36bb9836d63b63">cugl::NetworkConnection::startGame</a></div><div class="ttdeci">void startGame()</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a2df34f2edc0479e158437ffc1ad53205"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a2df34f2edc0479e158437ffc1ad53205">cugl::NetworkConnection::NetworkConnection</a></div><div class="ttdeci">NetworkConnection(ConnectionConfig config, std::string roomID)</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a666a90f363ca4d5853defa022bd2a131"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a666a90f363ca4d5853defa022bd2a131">cugl::NetworkConnection::getStatus</a></div><div class="ttdeci">NetStatus getStatus()</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a8ee18ffb991143e6473face82fa4ce20"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a8ee18ffb991143e6473face82fa4ce20">cugl::NetworkConnection::isPlayerActive</a></div><div class="ttdeci">bool isPlayerActive(uint8_t playerID)</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:212</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_a9d4ccf35398b14f3f62dfe2899029000"><div class="ttname"><a href="classcugl_1_1_network_connection.html#a9d4ccf35398b14f3f62dfe2899029000">cugl::NetworkConnection::NetworkConnection</a></div><div class="ttdeci">NetworkConnection(ConnectionConfig config)</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_aa8e38aeecf4b26d25ca385772e7562f7"><div class="ttname"><a href="classcugl_1_1_network_connection.html#aa8e38aeecf4b26d25ca385772e7562f7">cugl::NetworkConnection::getNumPlayers</a></div><div class="ttdeci">uint8_t getNumPlayers()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:215</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_ab5e0c89ac811a1178f26aa566ce244d0"><div class="ttname"><a href="classcugl_1_1_network_connection.html#ab5e0c89ac811a1178f26aa566ce244d0">cugl::NetworkConnection::getRoomID</a></div><div class="ttdeci">std::string getRoomID()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:203</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_ae2d66f6bc4a9a6eb67dd37e5717783f5"><div class="ttname"><a href="classcugl_1_1_network_connection.html#ae2d66f6bc4a9a6eb67dd37e5717783f5">cugl::NetworkConnection::NetStatus</a></div><div class="ttdeci">NetStatus</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:159</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_af352bba61aa10bbafc7bd24688172bc7"><div class="ttname"><a href="classcugl_1_1_network_connection.html#af352bba61aa10bbafc7bd24688172bc7">cugl::NetworkConnection::~NetworkConnection</a></div><div class="ttdeci">~NetworkConnection()</div></div>
+<div class="ttc" id="aclasscugl_1_1_network_connection_html_afb4f9a1d682fca562b268a07825ecf69"><div class="ttname"><a href="classcugl_1_1_network_connection.html#afb4f9a1d682fca562b268a07825ecf69">cugl::NetworkConnection::getPlayerID</a></div><div class="ttdeci">std::optional&lt; uint8_t &gt; getPlayerID()</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:193</div></div>
 <div class="ttc" id="anamespacecugl_html"><div class="ttname"><a href="namespacecugl.html">cugl</a></div><div class="ttdef"><b>Definition:</b> CUAsset.h:42</div></div>
-<div class="ttc" id="astructcugl_1_1_c_u_network_connection_1_1_connection_config_html"><div class="ttname"><a href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html">cugl::CUNetworkConnection::ConnectionConfig</a></div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:31</div></div>
-<div class="ttc" id="astructcugl_1_1_c_u_network_connection_1_1_connection_config_html_a2cd0f0dd41fb5b01c4351544e0a5efed"><div class="ttname"><a href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a2cd0f0dd41fb5b01c4351544e0a5efed">cugl::CUNetworkConnection::ConnectionConfig::maxNumPlayers</a></div><div class="ttdeci">uint32_t maxNumPlayers</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:37</div></div>
-<div class="ttc" id="astructcugl_1_1_c_u_network_connection_1_1_connection_config_html_a34b14e06b9c524721bcb0db6a7e2fb6b"><div class="ttname"><a href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a34b14e06b9c524721bcb0db6a7e2fb6b">cugl::CUNetworkConnection::ConnectionConfig::punchthroughServerPort</a></div><div class="ttdeci">uint16_t punchthroughServerPort</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:35</div></div>
-<div class="ttc" id="astructcugl_1_1_c_u_network_connection_1_1_connection_config_html_a81a033b8e0b9893c6d89e84682c804d5"><div class="ttname"><a href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#a81a033b8e0b9893c6d89e84682c804d5">cugl::CUNetworkConnection::ConnectionConfig::apiVersion</a></div><div class="ttdeci">uint8_t apiVersion</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:39</div></div>
-<div class="ttc" id="astructcugl_1_1_c_u_network_connection_1_1_connection_config_html_aa79150354d836db24ff8646ce94157d3"><div class="ttname"><a href="structcugl_1_1_c_u_network_connection_1_1_connection_config.html#aa79150354d836db24ff8646ce94157d3">cugl::CUNetworkConnection::ConnectionConfig::punchthroughServerAddr</a></div><div class="ttdeci">const char * punchthroughServerAddr</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:33</div></div>
+<div class="ttc" id="astructcugl_1_1_network_connection_1_1_connection_config_html"><div class="ttname"><a href="structcugl_1_1_network_connection_1_1_connection_config.html">cugl::NetworkConnection::ConnectionConfig</a></div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:60</div></div>
+<div class="ttc" id="astructcugl_1_1_network_connection_1_1_connection_config_html_a9b92ac1f6bfd8469e97479de6843e964"><div class="ttname"><a href="structcugl_1_1_network_connection_1_1_connection_config.html#a9b92ac1f6bfd8469e97479de6843e964">cugl::NetworkConnection::ConnectionConfig::maxNumPlayers</a></div><div class="ttdeci">uint32_t maxNumPlayers</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:66</div></div>
+<div class="ttc" id="astructcugl_1_1_network_connection_1_1_connection_config_html_a9f759c18c0843ee5561a87015496bfa0"><div class="ttname"><a href="structcugl_1_1_network_connection_1_1_connection_config.html#a9f759c18c0843ee5561a87015496bfa0">cugl::NetworkConnection::ConnectionConfig::punchthroughServerAddr</a></div><div class="ttdeci">const char * punchthroughServerAddr</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:62</div></div>
+<div class="ttc" id="astructcugl_1_1_network_connection_1_1_connection_config_html_aa0e3ea6b5ffba75a37699b66a2dedc32"><div class="ttname"><a href="structcugl_1_1_network_connection_1_1_connection_config.html#aa0e3ea6b5ffba75a37699b66a2dedc32">cugl::NetworkConnection::ConnectionConfig::punchthroughServerPort</a></div><div class="ttdeci">uint16_t punchthroughServerPort</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:64</div></div>
+<div class="ttc" id="astructcugl_1_1_network_connection_1_1_connection_config_html_aa46b1429aabacce9ebe9c0ff6e4f63f2"><div class="ttname"><a href="structcugl_1_1_network_connection_1_1_connection_config.html#aa46b1429aabacce9ebe9c0ff6e4f63f2">cugl::NetworkConnection::ConnectionConfig::apiVersion</a></div><div class="ttdeci">uint8_t apiVersion</div><div class="ttdef"><b>Definition:</b> CUNetworkConnection.h:72</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
