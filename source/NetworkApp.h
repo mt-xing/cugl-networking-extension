@@ -1,5 +1,5 @@
 //
-//  HelloApp.h
+//  NetworkApp.h
 //  Cornell University Game Library (CUGL)
 //
 //  This is the header for the custom application.  It is necessary so that
@@ -27,53 +27,73 @@
 //  Author: Michael Xing
 //  Version: 5/25/2021
 //
-#ifndef __HELLO_APP_H__
-#define __HELLO_APP_H__
+#ifndef NETWORK_APP_H
+#define NETWORK_APP_H
 #include <cugl/cugl.h>
 
 /**
- * Class for a simple Hello World style application
+ * Class for a simple networked game.
  *
- * The application simply moves the CUGL logo across the screen.  It also
- * provides a button to quit the application.
+ * The "game" consists of a single button players click to make a counter go up.
+ * Each player's counter is visible on the screen of all other players.
  */
-class HelloApp : public cugl::Application {
+class NetworkApp : public cugl::Application {
 private:
+	/** Maximum number of players supported */
 	constexpr static uint8_t NUM_PLAYERS = 3;
 
+	/** Pointer to network connection object */
 	std::shared_ptr<cugl::NetworkConnection> net;
+	/** Helper class to serialize non-trivial network messages */
 	cugl::NetworkSerializer serializer;
+	/** Helper class to deserialize network message encoded with serializer */
 	cugl::NetworkDeserializer deserializer;
+
+#pragma region Scene Graph Nodes
+#pragma mark Scene Graph Nodes
 
 	/** A scene graph, used to display our 2D scenes */
 	std::shared_ptr<cugl::Scene2> _scene;
 	/** A 3152 style SpriteBatch to render the scene */
 	std::shared_ptr<cugl::SpriteBatch>  _batch;
 
+	// Subgraphs
+
+	/** Subgraph for things shown on startup */
 	std::shared_ptr<cugl::scene2::SceneNode> view1Start;
+	/** Subgraph for things shown to host during matchmaking */
 	std::shared_ptr<cugl::scene2::SceneNode> view2Host;
+	/** Subgraph for things shown to client during matchmaking */
 	std::shared_ptr<cugl::scene2::SceneNode> view3Client;
+	/** Subgraph for things shown during gameplay */
 	std::shared_ptr<cugl::scene2::SceneNode> view4Game;
 
+	/** Font for labels (this demo uses Montserrat, licensed under the OFL) */
 	std::shared_ptr<cugl::Font> font;
 
+	// Individual scene graph nodes we keep a pointer to because we wish to update
+	// their state during the course of the game
+
+	/** Label on host screen */
 	std::shared_ptr<cugl::scene2::Label> hostInfo;
+	/** Label on client screen */
 	std::shared_ptr<cugl::scene2::Label> clientInfo;
+	/** Text input on client screen; they enter room IDs here */
 	std::shared_ptr<cugl::scene2::TextField> clientInput;
 
+	/** Label on game screen */
 	std::shared_ptr<cugl::scene2::Label> gameInfo;
+	/** Array of labels for each player's score on the game screen */
 	std::array<std::shared_ptr<cugl::scene2::Label>, NUM_PLAYERS> gamePlayers;
 
+#pragma mark -
+#pragma endregion
+
+	/** Scores for each player */
 	std::array<double, NUM_PLAYERS> playerScores;
 
-
-	
 	/**
 	 * Internal helper to build the scene graph.
-	 *
-	 * Scene graphs are not required.  You could manage all scenes just like
-	 * you do in 3152.  However, they greatly simplify scene management, and
-	 * have become standard in most game engines.
 	 */
 	void buildScene();
 
@@ -87,7 +107,7 @@ public:
 	 * of initialization from the constructor allows main.cpp to perform
 	 * advanced configuration of the application before it starts.
 	 */
-	HelloApp() : Application() {}
+	NetworkApp() : Application(), playerScores() {}
 
 	/**
 	 * Disposes of this application, releasing all resources.
@@ -96,7 +116,7 @@ public:
 	 * It simply calls the dispose() method in Application.  There is nothing
 	 * special to do here.
 	 */
-	~HelloApp() { }
+	~NetworkApp() { }
 
 	/**
 	 * The method called after OpenGL is initialized, but before running the application.
@@ -149,4 +169,4 @@ public:
 
 };
 
-#endif /* __HELLO_APP_H__ */
+#endif /* NETWORK_APP_H */

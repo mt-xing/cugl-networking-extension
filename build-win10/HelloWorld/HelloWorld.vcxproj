@@ -191,11 +191,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\source\HelloApp.h" />
+    <ClInclude Include="..\..\source\NetworkApp.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\HelloApp.cpp" />
+    <ClCompile Include="..\..\source\NetworkApp.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
   </ItemGroup>
   <ItemGroup>

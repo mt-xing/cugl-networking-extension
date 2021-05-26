@@ -28,7 +28,7 @@
 //  Version: 7/1/16
 
 // Include your application class
-#include "HelloApp.h"
+#include "NetworkApp.h"
 
 // This keeps us from having to write cugl:: all the time
 using namespace cugl;
@@ -48,7 +48,7 @@ using namespace cugl;
  */
 int main(int argc, char * argv[]) {
     // Change this to your application class
-    HelloApp app;
+    NetworkApp app;
     
     /// SET YOUR APPLICATION PROPERTIES
     

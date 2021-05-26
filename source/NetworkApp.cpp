@@ -1,5 +1,5 @@
 //
-//  HelloApp.cpp
+//  NetworkApp.cpp
 //  Cornell University Game Library (CUGL)
 //
 //  This is the implementation file for the custom application. This is the
@@ -28,14 +28,12 @@
 //  Version: 5/25/2021
 //
 // Include the class header, which includes all of the CUGL classes
-#include "HelloApp.h"
+#include "NetworkApp.h"
 #include <cugl/base/CUBase.h>
 
 #include <cstdio>
 
 using namespace cugl;
-// The number of frames before moving the logo to a new position
-#define TIME_STEP 60
 // This is adjusted by screen aspect ratio to get the height
 #define GAME_WIDTH 1024
 
@@ -58,7 +56,7 @@ using namespace cugl;
  * very last line.  This ensures that the state will transition to FOREGROUND,
  * causing the application to run.
  */
-void HelloApp::onStartup() {
+void NetworkApp::onStartup() {
 	cugl::Size size = getDisplaySize();
 	size *= GAME_WIDTH / size.width;
 
@@ -76,6 +74,8 @@ void HelloApp::onStartup() {
 	view3Client = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
 	view4Game = scene2::SceneNode::allocWithBounds(0, 0, size.width, size.height);
 
+	// Initialize the font (you can and probably should read this out of a json in a
+	// larger game project).
 	font = Font::alloc("montserrat.ttf", 16);
 
 	// Activate mouse or touch screen input as appropriate
@@ -104,7 +104,7 @@ void HelloApp::onStartup() {
  * very last line.  This ensures that the state will transition to NONE,
  * causing the application to be deleted.
  */
-void HelloApp::onShutdown() {
+void NetworkApp::onShutdown() {
 	// Delete all smart pointers
 	_scene = nullptr;
 	_batch = nullptr;
@@ -132,7 +132,14 @@ void HelloApp::onShutdown() {
 	Application::onShutdown();
 }
 
-void HelloApp::buildScene() {
+void NetworkApp::buildScene() {
+
+	// For simplicity, this demo predominately uses buttons via callbacks instead of
+	// polling them every frame. This means a lot of the functionality of the game
+	// is actually registered in this method.
+
+	// Labels are initialized with dummy text that are longer than their actual text
+	// will be; otherwise, the label will clip your new text (their width is fixed).
 
 	// Setup Start Phase
 	auto hostBtn = scene2::Button::alloc(scene2::Label::alloc("Host New Game", font));
@@ -142,6 +149,10 @@ void HelloApp::buildScene() {
 			CULog("Clicked host");
 			view1Start->setVisible(false);
 			view2Host->setVisible(true);
+			// Initialize a network connection as a host - just pass it a network config.
+			// This is NOT instant; when the connection status changed to CONNECTED, then
+			// getRoomID() will have your assigned room ID.
+			// Make sure you call receive() every frame until the game starts.
 			net = std::make_shared<NetworkConnection>(NETWORK_CONFIG);
 		}
 		});
@@ -197,6 +208,12 @@ void HelloApp::buildScene() {
 		if (down && view3Client->isVisible() && net == nullptr) {
 			CULog("Clicked join");
 			clientInfo->setText("Connecting...");
+			// Initialize a network connection as a client -
+			// pass it a network config and a room ID as a string.
+			// This is NOT instant; when the connection status changed to CONNECTED, then
+			// getPlayerID() will have your assigned player ID.
+			// Player ID 0 is reserved for the host.
+			// Make sure you call receive() every frame until the game starts.
 			net = std::make_shared<NetworkConnection>(NETWORK_CONFIG, clientInput->getText());
 		}
 		});
@@ -273,7 +290,7 @@ void HelloApp::buildScene() {
  *
  * @param timestep  The amount of time (in seconds) since the last frame
  */
-void HelloApp::update(float timestep) {
+void NetworkApp::update(float timestep) {
 	if (net == nullptr) {
 		// Phase 1 or 3
 		// There's nothing we need to do in either of these phases if net is null.
@@ -381,7 +398,7 @@ void HelloApp::update(float timestep) {
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
  */
-void HelloApp::draw() {
+void NetworkApp::draw() {
 	// This takes care of begin/end
 	_scene->render(_batch);
 }
