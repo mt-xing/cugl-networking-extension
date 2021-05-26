@@ -1,3 +1,9 @@
+//
+//  CUNetworkConnection.h
+//
+//  Author: Michael Xing
+//  Version: 5/25/2021
+//
 #ifndef CU_NETWORK_CONNECTION_H
 #define CU_NETWORK_CONNECTION_H
 
@@ -16,26 +22,53 @@
 #include <slikenet/MessageIdentifiers.h>
 #include <slikenet/NatPunchthroughClient.h>
 
+// Forward declarations
 namespace SLNet {
 	class RakPeerInterface;
 }
 
 namespace cugl {
+	/**
+	 * Network connection to other players with a peer-to-peer interface.
+	 * 
+	 * The premise of this class is to make networking as simple as possible. Simply call
+	 * send() with a byte vector, and then all others will receive it when they call receive().
+	 * 
+	 * This class maintains a networked game using an ad-hoc server setup, but provides
+	 * an interface that acts like it is peer-to-peer.
+	 * 
+	 * The "host" is the server, and is the one all others are connected to. The "clients" are
+	 * other players connected to the ad-hoc server. However, any messages sent are relayed
+	 * by the host to all other players too, so the interface appears peer-to-peer.
+	 * 
+	 * You can use this as a true client-server by just checking the player ID. Player ID 0
+	 * is the host, and all others are clients connected to the host.
+	 * 
+	 * This class does support automatic reconnections, but does NOT support host migration.
+	 * If the host drops offline, the connection is closed.
+	 */
 	class NetworkConnection {
 	public:
 
 #pragma region Setup
 		/**
-		 * Basic data needed to setup a connection
+		 * Basic data needed to setup a connection.
+		 * 
+		 * To setup a NAT punchthrough server of your own, see:
+		 * https://github.com/mt-xing/nat-punchthrough-server
 		 */
 		struct ConnectionConfig {
 			/** Address of the NAT Punchthrough server */
 			const char* punchthroughServerAddr;
 			/** Port to connect on the NAT Punchthrough server */
 			uint16_t punchthroughServerPort;
-			/** Maximum number of players allowed per game */
+			/** Maximum number of players allowed per game (including host) */
 			uint32_t maxNumPlayers;
-			/** API version number */
+			/**
+			 * API version number; clients with mismatched versions will be prevented
+			 * from connecting to each other. Start this at 0 and increment it every
+			 * time a backwards incompatible API change happens.
+			 */
 			uint8_t apiVersion;
 
 			ConnectionConfig(const char* punchthroughServerAddr, uint16_t punchthroughServerPort, uint32_t maxPlayers, uint8_t apiVer) {
@@ -48,6 +81,13 @@ namespace cugl {
 
 		/**
 		 * Start a new network connection as host.
+		 * 
+		 * This will automatically connect to the NAT punchthrough server and request a room ID.
+		 * This process is NOT instantaneous. Wait for getStatus() to return CONNECTED.
+		 * Once it does, getRoomID() will return your assigned room ID.
+		 * 
+		 * You will likely want to access this class through a smart pointer, which you can
+		 * easily make by calling std::make_shared<cugl::NetworkConnection>(config);
 		 *
 		 * @param setup Connection config
 		 */
@@ -55,9 +95,17 @@ namespace cugl {
 
 		/**
 		 * Start a new network connection as client.
+		 * 
+		 * This will automatically connect to the NAT punchthrough server and then try
+		 * to connect to the host with the given ID.
+		 * This process is NOT instantaneous. Wait for getStatus() to return CONNECTED.
+		 * Once it does, getPlayerID() will return your assigned player ID.
+		 * 
+		 * You will likely want to access this class through a smart pointer, which you can
+		 * easily make by calling std::make_shared<cugl::NetworkConnection>(config, roomID);
 		 *
 		 * @param setup Connection config
-		 * @param roomID The RakNet GUID of the host.
+		 * @param roomID Host's assigned Room ID
 		 */
 		NetworkConnection(ConnectionConfig config, std::string roomID);
 
@@ -68,8 +116,13 @@ namespace cugl {
 #pragma region Main Networking Methods
 		/**
 		 * Sends a byte array to all other players.
+		 * 
+		 * Within a few frames, other players should receive this via a call to receive().
 		 *
-		 * This requires a connection be established. If not, this is a noop.
+		 * This requires a connection be established. Otherwise its behavior is undefined.
+		 * 
+		 * You may choose to either send a byte array directly, or you can use the NetworkSerializer
+		 * and NetworkDeserializer classes to encode more complex data.
 		 *
 		 * @param msg The byte array to send.
 		 */
@@ -78,12 +131,16 @@ namespace cugl {
 		/**
 		 * Method to call every network frame to process incoming network messages.
 		 * 
-		 * A network frame can, but need not be, the same as a render frame.
+		 * A network frame can, but need not be, the same as a render frame. However,
+		 * during the network connection phase, before the game starts, this method should
+		 * be called every frame. Otherwise, the NAT Punchthrough library may fail.
 		 * 
 		 * This method must be called periodically EVEN BEFORE A CONNECTION IS ESTABLISHED.
-		 * Otherwise, the library has no way to receive and process incoming connections.
+		 * Otherwise, the library has no way to receive and process incoming connections
 		 *
-		 * @param dispatcher Function that will be called on every byte array sent by other players.
+		 * @param dispatcher Function that will be called on every received byte array since the last
+		 * call to receive(). However, if the original message was sent using NetworkSerializer,
+		 * you should be using NetworkDeserializer to deserialize it.
 		 */
 		void receive(const std::function<void(const std::vector<uint8_t>&)>& dispatcher);
 #pragma endregion
@@ -91,12 +148,13 @@ namespace cugl {
 #pragma region State Management
 		/**
 		 * Mark the game as started and ban incoming connections except for reconnects.
+		 * 
 		 * PRECONDITION: Can only be called by the host.
 		 */
 		void startGame();
 
 		/**
-		 * Potential states the networking could be in
+		 * Potential states the network connection could be in
 		 */
 		enum class NetStatus {
 			// No connection

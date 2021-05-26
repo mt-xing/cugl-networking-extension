@@ -8,6 +8,25 @@
 #include <cugl/assets/CUJsonValue.h>
 
 namespace cugl {
+	/**
+	 * Helper class that serializes complex data into a byte array.
+	 * 
+	 * Intended for use with cugl::NetworkConnection.
+	 * 
+	 * Can serialize the following data types:
+	 *  - Floats
+	 *  - Doubles
+	 *  - 32 Bit Signed + Unsigned Integers
+	 *  - 64 Bit Signed + Unsigned Integers
+	 *  - Strings (see note below)
+	 *  - JsonValue (the cugl JSON class)
+	 *  - Vectors of all above types
+	 * 
+	 * Note about Strings: if a char* is written, it will be deserialized as a std::string.
+	 * The same applies to vectors of char*.
+	 * 
+	 * Deserialize these messages using NetworkDeserializer.
+	 */
 	class NetworkSerializer {
 	public:
 
@@ -72,6 +91,13 @@ void write(std::vector<T> v);
 		std::vector<uint8_t> data;
 	};
 
+	/**
+	 * Helper class that deserializes byte arrays back into the original complex data.
+	 *
+	 * Intended for use with cugl::NetworkConnection.
+	 *
+	 * Only handles messages serialized using NetworkSerializer.
+	 */
 	class NetworkDeserializer {
 	public:
 		/**
@@ -138,7 +164,9 @@ void write(std::vector<T> v);
 		 */
 		void reset();
 	private:
+		/** Currently loaded data */
 		std::vector<uint8_t> data;
+		/** Position in the data of next byte to read */
 		size_t pos = 0;
 	};
 }
