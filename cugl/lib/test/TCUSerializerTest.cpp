@@ -12,7 +12,7 @@ void cugl::serializerUnitTest() {
 }
 
 void cugl::simpleTest() {
-	cugl::CUNetworkSerializer test;
+	cugl::NetworkSerializer test;
 	test.write("hello world");
 	test.write(-123.4);
 	test.write((int64_t)5);
@@ -21,7 +21,7 @@ void cugl::simpleTest() {
 
 	std::vector<uint8_t> d(test.serialize());
 
-	cugl::CUNetworkDeserializer test2;
+	cugl::NetworkDeserializer test2;
 	test2.receive(d);
 
 	CUAssertAlwaysLog(std::get<std::string>(test2.read()) == "hello world", "string test");
@@ -61,7 +61,7 @@ void cugl::testNumericTypes() {
 		std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()
 	};
 
-	cugl::CUNetworkSerializer test;
+	cugl::NetworkSerializer test;
 	for (auto& e : u32) {
 		test.write(e);
 	}
@@ -82,7 +82,7 @@ void cugl::testNumericTypes() {
 	}
 
 	std::vector<uint8_t> dd(test.serialize());
-	cugl::CUNetworkDeserializer test2;
+	cugl::NetworkDeserializer test2;
 	test2.receive(dd);
 	for (auto& e : u32) {
 		CUAssertAlwaysLog(e == std::get<uint32_t>(test2.read()), "uint32 test");
@@ -110,12 +110,12 @@ void cugl::testStrings() {
 		"OIEOIRH$)(hrwhtWH$(H(HT$*(YHRH92)(RU#**(YHRT(*#(T$twert934whiureyif9f\x00vvdi"
 	};
 
-	cugl::CUNetworkSerializer test;
+	cugl::NetworkSerializer test;
 	for (auto& e : tests) {
 		test.write(e);
 	}
 	std::vector<uint8_t> dd(test.serialize());
-	cugl::CUNetworkDeserializer test2;
+	cugl::NetworkDeserializer test2;
 	test2.receive(dd);
 	for (auto& e : tests) {
 		CUAssertAlwaysLog(e == std::get<std::string>(test2.read()), "string test");
@@ -135,7 +135,7 @@ void cugl::testVectors() {
 		{"2340jr09828930hjr892hr9823h98r2h98r29r34"}
 	};
 
-	cugl::CUNetworkSerializer test;
+	cugl::NetworkSerializer test;
 	for (auto& e : fv) {
 		test.write(e);
 	}
@@ -144,7 +144,7 @@ void cugl::testVectors() {
 	}
 
 	std::vector<uint8_t> dd(test.serialize());
-	cugl::CUNetworkDeserializer test2;
+	cugl::NetworkDeserializer test2;
 	test2.receive(dd);
 	for (auto& e : fv) {
 		CUAssertAlwaysLog(e == std::get < std::vector<float> > (test2.read()), "float vector test");
@@ -158,10 +158,10 @@ void cugl::testJson() {
 	cugl::JsonValue v;
 	v.initWithJson("{\"a\":1.222,\"b\":true,\"c\":false,\"d\":null,\"e\":[1,2,3],\"f\":[1,2,\"false\",true,null],\"g\":{\"zzz\":1,\"xxx\":\"why\",\"yyy\":true,\"www\":null,\"aaa\":[1,2,3,false]},\"h\":\"hello world this is an annoying json\"}");
 	
-	cugl::CUNetworkSerializer test;
+	cugl::NetworkSerializer test;
 	test.write(std::make_shared<cugl::JsonValue>(v));
 	std::vector<uint8_t> dd(test.serialize());
-	cugl::CUNetworkDeserializer test2;
+	cugl::NetworkDeserializer test2;
 	test2.receive(dd);
 
 	// This test is quite fragile because there's no guarantees JSONs stringify in the same key order

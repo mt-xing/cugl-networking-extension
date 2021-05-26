@@ -75,20 +75,20 @@ constexpr size_t RECONN_GAP = 3;
 /** How long to wait before giving up on reconnection (seconds) */
 constexpr size_t RECONN_TIMEOUT = 15;
 
-CUNetworkConnection::CUNetworkConnection(ConnectionConfig config)
+NetworkConnection::NetworkConnection(ConnectionConfig config)
 	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(1), playerID(0), config(config) {
 	c0StartupConn();
 	remotePeer = HostPeers(config.maxNumPlayers);
 }
 
-CUNetworkConnection::CUNetworkConnection(ConnectionConfig config, std::string roomID)
+NetworkConnection::NetworkConnection(ConnectionConfig config, std::string roomID)
 	: status(NetStatus::Pending), apiVer(config.apiVersion), numPlayers(1), maxPlayers(0), config(config) {
 	c0StartupConn();
 	remotePeer = ClientPeer(std::move(roomID));
 	peer->SetMaximumIncomingConnections(1);
 }
 
-CUNetworkConnection::~CUNetworkConnection() {
+NetworkConnection::~NetworkConnection() {
 	peer->Shutdown(SHUTDOWN_BLOCK);
 	SLNet::RakPeerInterface::DestroyInstance(peer.release());
 }
@@ -113,7 +113,7 @@ std::vector<uint8_t> readBs(SLNet::BitStream& bts) {
 
 #pragma region Connection Handshake
 
-void CUNetworkConnection::c0StartupConn() {
+void NetworkConnection::c0StartupConn() {
 	peer = std::unique_ptr<SLNet::RakPeerInterface>(SLNet::RakPeerInterface::GetInstance());
 
 	peer->SetTimeoutTime(DISCONN_TIME, SLNet::UNASSIGNED_SYSTEM_ADDRESS);
@@ -137,11 +137,11 @@ void CUNetworkConnection::c0StartupConn() {
 		this->natPunchServerAddress->GetPort(), nullptr, 0);
 }
 
-void cugl::CUNetworkConnection::ch1HostConnServer(HostPeers& h) {
+void cugl::NetworkConnection::ch1HostConnServer(HostPeers& h) {
 	CULog("Connected to punchthrough server; awaiting room ID");
 }
 
-void cugl::CUNetworkConnection::ch2HostGetRoomID(HostPeers& h, SLNet::BitStream& bts) {
+void cugl::NetworkConnection::ch2HostGetRoomID(HostPeers& h, SLNet::BitStream& bts) {
 	auto msgConverted = readBs(bts);
 	std::stringstream newRoomId;
 	for (size_t i = 0; i < ROOM_LENGTH; i++) {
@@ -153,7 +153,7 @@ void cugl::CUNetworkConnection::ch2HostGetRoomID(HostPeers& h, SLNet::BitStream&
 	status = NetStatus::Connected;
 }
 
-void cugl::CUNetworkConnection::cc1ClientConnServer(ClientPeer& c) {
+void cugl::NetworkConnection::cc1ClientConnServer(ClientPeer& c) {
 	CULog("Connected to punchthrough server");
 	CULog("Trying to connect to %s", c.room.c_str());
 	SLNet::RakNetGUID remote;
@@ -162,11 +162,11 @@ void cugl::CUNetworkConnection::cc1ClientConnServer(ClientPeer& c) {
 		*(this->natPunchServerAddress));
 }
 
-void cugl::CUNetworkConnection::cc2ClientPunchSuccess(ClientPeer& c, SLNet::Packet* packet) {
+void cugl::NetworkConnection::cc2ClientPunchSuccess(ClientPeer& c, SLNet::Packet* packet) {
 	c.addr = std::make_unique<SLNet::SystemAddress>(packet->systemAddress);
 }
 
-void cugl::CUNetworkConnection::cc3HostReceivedPunch(HostPeers& h, SLNet::Packet* packet) {
+void cugl::NetworkConnection::cc3HostReceivedPunch(HostPeers& h, SLNet::Packet* packet) {
 	auto p = packet->systemAddress;
 	CULog("Host received punchthrough; curr num players %d", peer->NumberOfConnections());
 
@@ -195,13 +195,13 @@ void cugl::CUNetworkConnection::cc3HostReceivedPunch(HostPeers& h, SLNet::Packet
 	peer->Connect(p.ToString(false), p.GetPort(), nullptr, 0);
 }
 
-void cugl::CUNetworkConnection::cc4ClientReceiveHostConnection(ClientPeer& c, SLNet::Packet* packet) {
+void cugl::NetworkConnection::cc4ClientReceiveHostConnection(ClientPeer& c, SLNet::Packet* packet) {
 	if (packet->systemAddress == *c.addr) {
 		CULog("Connected to host :D");
 	}
 }
 
-void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet* packet) {
+void cugl::NetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet* packet) {
 
 	if (h.toReject.count(packet->systemAddress.ToString()) > 0) {
 		CULog("Rejecting player connection - bye :(");
@@ -235,7 +235,7 @@ void cugl::CUNetworkConnection::cc5HostConfirmClient(HostPeers& h, SLNet::Packet
 	CULog("Host confirmed players; curr connections %d", peer->NumberOfConnections());
 }
 
-void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
+void cugl::NetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
 	bool apiMatch = msgConverted[3] == apiVer;
 	if (!apiMatch) {
 		CULogError("API version mismatch; currently %d but host was %d", apiVer,
@@ -253,7 +253,7 @@ void cugl::CUNetworkConnection::cc6ClientAssignedID(ClientPeer& c, const std::ve
 	directSend({ *playerID, (uint8_t)(apiMatch ? 1 : 0) }, JoinRoom, *c.addr);
 }
 
-void cugl::CUNetworkConnection::cc7HostGetClientData(
+void cugl::NetworkConnection::cc7HostGetClientData(
 	HostPeers& h, SLNet::Packet* packet, const std::vector<uint8_t>& msgConverted
 ) {
 
@@ -290,7 +290,7 @@ void cugl::CUNetworkConnection::cc7HostGetClientData(
 
 }
 
-void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
+void cugl::NetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::vector<uint8_t>& msgConverted) {
 
 	CULog("Reconnection Progress: Received data from host");
 
@@ -327,7 +327,7 @@ void cugl::CUNetworkConnection::cr1ClientReceivedInfo(ClientPeer& c, const std::
 	}, Reconnect, *c.addr);
 }
 
-void cugl::CUNetworkConnection::cr2HostGetClientResp(
+void cugl::NetworkConnection::cr2HostGetClientResp(
 	HostPeers& h, SLNet::Packet* packet, const std::vector<uint8_t>& msgConverted)
 {
 	CULog("Host processing reconnection response");
@@ -336,7 +336,7 @@ void cugl::CUNetworkConnection::cr2HostGetClientResp(
 
 #pragma endregion
 
-void CUNetworkConnection::broadcast(const std::vector<uint8_t>& msg, SLNet::SystemAddress& ignore,
+void NetworkConnection::broadcast(const std::vector<uint8_t>& msg, SLNet::SystemAddress& ignore,
 	CustomDataPackets packetType) {
 	SLNet::BitStream bs;
 	bs.Write(static_cast<uint8_t>(ID_USER_PACKET_ENUM + packetType));
@@ -345,9 +345,9 @@ void CUNetworkConnection::broadcast(const std::vector<uint8_t>& msg, SLNet::Syst
 	peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1, ignore, true);
 }
 
-void CUNetworkConnection::send(const std::vector<uint8_t>& msg) { send(msg, Standard); }
+void NetworkConnection::send(const std::vector<uint8_t>& msg) { send(msg, Standard); }
 
-void CUNetworkConnection::send(const std::vector<uint8_t>& msg, CustomDataPackets packetType) {
+void NetworkConnection::send(const std::vector<uint8_t>& msg, CustomDataPackets packetType) {
 	SLNet::BitStream bs;
 	bs.Write(static_cast<uint8_t>(ID_USER_PACKET_ENUM + packetType));
 	bs.Write(static_cast<uint8_t>(msg.size()));
@@ -365,7 +365,7 @@ void CUNetworkConnection::send(const std::vector<uint8_t>& msg, CustomDataPacket
 		}), remotePeer);
 }
 
-void cugl::CUNetworkConnection::directSend(
+void cugl::NetworkConnection::directSend(
 	const std::vector<uint8_t>& msg, CustomDataPackets packetType, SLNet::SystemAddress dest
 ) {
 	SLNet::BitStream bs;
@@ -375,7 +375,7 @@ void cugl::CUNetworkConnection::directSend(
 	peer->Send(&bs, MEDIUM_PRIORITY, RELIABLE, 1, dest, false);
 }
 
-void cugl::CUNetworkConnection::attemptReconnect() {
+void cugl::NetworkConnection::attemptReconnect() {
 	CUAssertLog(disconnTime.has_value(), "No time for disconnect??");
 
 	time_t now = time(nullptr);
@@ -405,7 +405,7 @@ void cugl::CUNetworkConnection::attemptReconnect() {
 }
 
 
-void CUNetworkConnection::receive(
+void NetworkConnection::receive(
 	const std::function<void(const std::vector<uint8_t>&)>& dispatcher) {
 
 	switch (status) {
@@ -615,7 +615,7 @@ void CUNetworkConnection::receive(
 	}
 }
 
-void CUNetworkConnection::startGame() {
+void NetworkConnection::startGame() {
 	CULog("Starting Game");
 	std::visit(make_visitor([&](HostPeers& h) {
 		h.started = true;
@@ -624,6 +624,6 @@ void CUNetworkConnection::startGame() {
 	maxPlayers = numPlayers;
 }
 
-cugl::CUNetworkConnection::NetStatus cugl::CUNetworkConnection::getStatus() {
+cugl::NetworkConnection::NetStatus cugl::NetworkConnection::getStatus() {
 	return status;
 }

@@ -8,7 +8,7 @@
 #include <cugl/assets/CUJsonValue.h>
 
 namespace cugl {
-	class CUNetworkSerializer {
+	class NetworkSerializer {
 	public:
 
 #define WRITE_METHODS(T, n) \
@@ -72,7 +72,7 @@ void write(std::vector<T> v);
 		std::vector<uint8_t> data;
 	};
 
-	class CUNetworkDeserializer {
+	class NetworkDeserializer {
 	public:
 		/**
 		 * Variant of possible messages to receive.
@@ -105,7 +105,7 @@ void write(std::vector<T> v);
 		 * Load a new message to read.
 		 * 
 		 * Calling this method will discard any previously loaded messages.
-		 * The message must be serialized by CUNetworkSerializer.
+		 * The message must be serialized by NetworkSerializer.
 		 * 
 		 * Once loaded, call read() to get a single value (or vector of values).
 		 * The values are guaranteed to be delievered in the same order they were written.
@@ -113,7 +113,7 @@ void write(std::vector<T> v);
 		 * The most common use case is to pass received byte vectors from the Network
 		 * Connection to this method and then to call read() until it returns the monostate.
 		 * 
-		 * @param msg The byte vector serialized by CUNetworkSerializer
+		 * @param msg The byte vector serialized by NetworkSerializer
 		 */
 		void receive(const std::vector<uint8_t>& msg);
 

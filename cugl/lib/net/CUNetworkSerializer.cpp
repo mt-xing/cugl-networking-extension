@@ -22,11 +22,11 @@ enum DataType : uint8_t {
 	Array = 127
 };
 
-void cugl::CUNetworkSerializer::write(bool b) {
+void cugl::NetworkSerializer::write(bool b) {
 	data.push_back(b ? BooleanTrue : BooleanFalse);
 }
 
-void cugl::CUNetworkSerializer::write(std::string s) {
+void cugl::NetworkSerializer::write(std::string s) {
 	data.push_back(String);
 	write(s.size());
 	for (char& c : s) {
@@ -41,7 +41,7 @@ void cugl::CUNetworkSerializer::write(std::string s) {
  * @param TYPE Enum of the type stored inside the vector
  */
 #define WRITE_VEC(T, TYPE) \
-void cugl::CUNetworkSerializer::write(std::vector<T> v) {\
+void cugl::NetworkSerializer::write(std::vector<T> v) {\
 	data.push_back(Array + TYPE); \
 	write(v.size()); \
 	for (size_t i = 0; i < v.size(); i++) {	\
@@ -56,7 +56,7 @@ void cugl::CUNetworkSerializer::write(std::vector<T> v) {\
  * @param TYPE Enum of the type
  */
 #define WRITE_NUMERIC_METHODS(T, TYPE) \
-void cugl::CUNetworkSerializer::write(T v) {\
+void cugl::NetworkSerializer::write(T v) {\
 	T ii = cugl::marshall(v);\
 	const uint8_t* bytes = reinterpret_cast<const uint8_t*>(&ii);\
 	data.push_back(TYPE);\
@@ -76,11 +76,11 @@ WRITE_NUMERIC_METHODS(int64_t, Int64)
 WRITE_VEC(char*, String)
 WRITE_VEC(std::string, String)
 
-void cugl::CUNetworkSerializer::write(char* v) {
+void cugl::NetworkSerializer::write(char* v) {
 	write(std::string(v));
 }
 
-void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
+void cugl::NetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
 	data.push_back(Json);
 	switch (j->type()) {
 	case cugl::JsonValue::Type::NullType: 
@@ -115,16 +115,16 @@ void cugl::CUNetworkSerializer::write(std::shared_ptr<cugl::JsonValue> j) {
 }
 WRITE_VEC(std::shared_ptr<cugl::JsonValue>, Json)
 
-const std::vector<uint8_t>& cugl::CUNetworkSerializer::serialize() {
+const std::vector<uint8_t>& cugl::NetworkSerializer::serialize() {
 	return data;
 }
 
-void cugl::CUNetworkSerializer::reset() {
+void cugl::NetworkSerializer::reset() {
 	data.clear();
 }
 
 
-void cugl::CUNetworkDeserializer::receive(const std::vector<uint8_t>& msg) {
+void cugl::NetworkDeserializer::receive(const std::vector<uint8_t>& msg) {
 	data = msg;
 	pos = 0;
 }
@@ -149,7 +149,7 @@ case NAME:{\
 }\
 DECODE_VEC(T, NAME)
 
-cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
+cugl::NetworkDeserializer::Message cugl::NetworkDeserializer::read() {
 	if (pos >= data.size()) {
 		return {};
 	}
@@ -226,7 +226,7 @@ cugl::CUNetworkDeserializer::Message cugl::CUNetworkDeserializer::read() {
 	}
 }
 
-void cugl::CUNetworkDeserializer::reset() {
+void cugl::NetworkDeserializer::reset() {
 	pos = 0;
 	data.clear();
 }

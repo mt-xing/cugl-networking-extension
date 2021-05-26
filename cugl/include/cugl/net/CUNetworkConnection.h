@@ -21,7 +21,7 @@ namespace SLNet {
 }
 
 namespace cugl {
-	class CUNetworkConnection {
+	class NetworkConnection {
 	public:
 
 #pragma region Setup
@@ -51,7 +51,7 @@ namespace cugl {
 		 *
 		 * @param setup Connection config
 		 */
-		explicit CUNetworkConnection(ConnectionConfig config);
+		explicit NetworkConnection(ConnectionConfig config);
 
 		/**
 		 * Start a new network connection as client.
@@ -59,10 +59,10 @@ namespace cugl {
 		 * @param setup Connection config
 		 * @param roomID The RakNet GUID of the host.
 		 */
-		CUNetworkConnection(ConnectionConfig config, std::string roomID);
+		NetworkConnection(ConnectionConfig config, std::string roomID);
 
 		/** Delete and cleanup this connection. */
-		~CUNetworkConnection();
+		~NetworkConnection();
 #pragma endregion
 
 #pragma region Main Networking Methods

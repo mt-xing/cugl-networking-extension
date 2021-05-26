@@ -1,7 +1,6 @@
 #include "TestNetwork.h"
 
 #include <cugl/cugl.h>
-#include <cugl/net/CUNetworkSerializer.h>
 // Super fragile include; here only for testing purposes
 #include <cugl/../../lib/test/TCUSerializerTest.h>
 
@@ -9,8 +8,8 @@ static uint8_t lastNum = 942;
 constexpr bool RUN_TESTS = true;
 
 TestNetwork::TestNetwork() {
-	net = std::make_shared<cugl::CUNetworkConnection>(
-		cugl::CUNetworkConnection::ConnectionConfig(
+	net = std::make_shared<cugl::NetworkConnection>(
+		cugl::NetworkConnection::ConnectionConfig(
 			"34.74.68.73",
 			61111,
 			3,

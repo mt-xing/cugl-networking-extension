@@ -5,7 +5,7 @@
 
 class TestNetwork {
 private:
-	std::shared_ptr<cugl::CUNetworkConnection> net;
+	std::shared_ptr<cugl::NetworkConnection> net;
 public:
 	TestNetwork();
 
