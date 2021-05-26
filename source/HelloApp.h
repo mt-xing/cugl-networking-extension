@@ -43,8 +43,9 @@ class HelloApp : public cugl::Application {
 private:
 	constexpr static uint8_t NUM_PLAYERS = 3;
 
-	std::shared_ptr<TestNetwork> nn;
 	std::shared_ptr<cugl::NetworkConnection> net;
+	cugl::NetworkSerializer serializer;
+	cugl::NetworkDeserializer deserializer;
 
 	/** A scene graph, used to display our 2D scenes */
 	std::shared_ptr<cugl::Scene2> _scene;

@@ -39,6 +39,15 @@ using namespace cugl;
 // This is adjusted by screen aspect ratio to get the height
 #define GAME_WIDTH 1024
 
+// Network connection configuration, with punchthrough server IP,
+// server port, num players, and api version
+#define NETWORK_CONFIG cugl::NetworkConnection::ConnectionConfig(\
+	"34.74.68.73",\
+	61111,\
+	3,\
+	0\
+)
+
 /**
  * The method called after OpenGL is initialized, but before running the application.
  *
@@ -81,8 +90,6 @@ void HelloApp::onStartup() {
 	// Build the scene from these assets
 	buildScene();
 	Application::onStartup();
-
-	nn = std::make_shared<TestNetwork>();
 }
 
 /**
@@ -100,6 +107,18 @@ void HelloApp::onShutdown() {
 	// Delete all smart pointers
 	_scene = nullptr;
 	_batch = nullptr;
+	view1Start = nullptr;
+	view2Host = nullptr;
+	view3Client = nullptr;
+	view4Game = nullptr;
+	font = nullptr;
+	hostInfo = nullptr;
+	clientInfo = nullptr;
+	clientInput = nullptr;
+	gameInfo = nullptr;
+	for (size_t i = 0; i < NUM_PLAYERS; i++) {
+		gamePlayers[i] = nullptr;
+	}
 
 	// Deativate input
 #if defined CU_TOUCH_SCREEN
@@ -121,6 +140,7 @@ void HelloApp::buildScene() {
 			CULog("Clicked host");
 			view1Start->setVisible(false);
 			view2Host->setVisible(true);
+			net = std::make_shared<NetworkConnection>(NETWORK_CONFIG);
 		}
 		});
 	hostBtn->activate();
@@ -144,10 +164,15 @@ void HelloApp::buildScene() {
 	auto hostStartBtn = scene2::Button::alloc(scene2::Label::alloc("Start Game", font));
 	hostStartBtn->setPosition(100, 100);
 	hostStartBtn->addListener([&](const std::string& name, bool down) {
-		if (down && view2Host->isVisible()) {
+		if (down && view2Host->isVisible() && net->getStatus() == NetworkConnection::NetStatus::Connected) {
 			CULog("Clicked start");
 			view2Host->setVisible(false);
 			view4Game->setVisible(true);
+			// You can send byte vectors like this directly
+			// Or you can choose to use NetworkSerializer as shown down in update()
+			net->send({ 0 });
+			net->startGame();
+			gameInfo->setText("You are player " + *net->getPlayerID());
 		}
 		});
 	hostStartBtn->activate();
@@ -163,8 +188,10 @@ void HelloApp::buildScene() {
 	auto clientStartBtn = scene2::Button::alloc(scene2::Label::alloc("Join", font));
 	clientStartBtn->setPosition(100, 100);
 	clientStartBtn->addListener([&](const std::string& name, bool down) {
-		if (down && view3Client->isVisible()) {
-			CULog("Clicked start");
+		if (down && view3Client->isVisible() && net == nullptr) {
+			CULog("Clicked join");
+			clientInfo->setText("Connecting...");
+			net = std::make_shared<NetworkConnection>(NETWORK_CONFIG, clientInput->getText());
 		}
 		});
 	clientStartBtn->activate();
@@ -182,6 +209,24 @@ void HelloApp::buildScene() {
 	gameBtn->addListener([&](const std::string& name, bool down) {
 		if (down && view4Game->isVisible()) {
 			CULog("Clicked cookie");
+			// getPlayerID() returns an optional
+			// I'm dereferencing it directly because the class invariant should guarantee
+			// that if view4Game is visible, then we're in the game proper and thus have a player ID.
+			playerScores[*net->getPlayerID()]++;
+
+			// Demonstrating using network serialization to send a message instead.
+			// Serializers must be manually reset before each use.
+			// (This allows you to call serialize() multiple times for the same message
+			// if you ever want to for some reason)
+			serializer.reset();
+			JsonValue msg;
+			msg.initObject();
+			msg.appendValue("player", static_cast<double>(*net->getPlayerID()));
+			msg.appendValue("amount", static_cast<double>(playerScores[*net->getPlayerID()]));
+			// Serializer can write booleans, numeric types, strings, and JSONs.
+			// They'll be read off on the other end in the same order they were written in.
+			serializer.write(std::make_shared<JsonValue>(msg));
+			net->send(serializer.serialize());
 		}
 		});
 	gameBtn->activate();
@@ -195,6 +240,9 @@ void HelloApp::buildScene() {
 		view4Game->addChild(gamePlayers[i]);
 	}
 
+	for (size_t i = 0; i < NUM_PLAYERS; i++) {
+		playerScores[i] = 0;
+	}
 
 
 	// Add everything to the scene
@@ -220,8 +268,97 @@ void HelloApp::buildScene() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void HelloApp::update(float timestep) {
-	nn->step();
-	
+	if (net == nullptr) {
+		// Phase 1 or 3
+		// There's nothing we need to do in either of these phases if net is null.
+		return;
+	}
+	else {
+		switch (net->getStatus()) {
+		case NetworkConnection::NetStatus::Disconnected:
+			break;
+		case NetworkConnection::NetStatus::Pending:
+			break;
+		case NetworkConnection::NetStatus::Connected:
+
+			// It might not be super smart to change the text every frame.
+			// But for this demo I don't care.
+			if (view2Host->isVisible()) {
+				std::ostringstream disp;
+				disp << "Room ID: ";
+				disp << net->getRoomID();
+				disp << " # of Players: ";
+				disp << net->getNumPlayers();
+				hostInfo->setText(disp.str());
+			}
+			else if (view3Client->isVisible()) {
+				std::ostringstream disp;
+				disp << "Connected to ";
+				disp << net->getNumPlayers();
+				disp << " players";
+				clientInfo->setText(disp.str());
+			}
+			else if (view4Game->isVisible()) {
+				for (uint8_t i = 0; i < NUM_PLAYERS; i++) {
+					std::ostringstream disp;
+					disp << "Player ";
+					disp << i;
+					disp << " clicked ";
+					disp << playerScores[i];
+					disp << " times";
+					gamePlayers[i]->setText(disp.str());
+				}
+			}
+
+			break;
+		case NetworkConnection::NetStatus::Reconnecting:
+			gameInfo->setText("Reconnecting");
+			break;
+		case NetworkConnection::NetStatus::RoomNotFound:
+			clientInfo->setText("Invalid room");
+			net = nullptr;
+			return;
+		case NetworkConnection::NetStatus::ApiMismatch:
+			// For this demo, we're treating this error as unrecoverable
+			clientInfo->setText("Outdated app");
+			hostInfo->setText("Outdated app");
+			net = nullptr;
+			return;
+		case NetworkConnection::NetStatus::GenericError:
+			// For this demo, we're treating this error as unrecoverable
+			clientInfo->setText("Unknown error");
+			hostInfo->setText("Unknown error");
+			net = nullptr;
+			return;
+		}
+
+		// Call receive even when the connection has not been established yet.
+		// This is the method that steps the library so it can do things like broker connections.
+		// You don't have to call it every frame during gameplay, but during the matchmaking
+		// phase, you should (the punchthrough library doesn't work reliably if this is not called
+		// frequently enough).
+		net->receive([this](auto msg) {
+			// There's that one message we send as a raw byte vector when the game is starting.
+			// In that case, msg is your byte vector, and you just read it like any other vector.
+			if (msg.size() == 1 && msg[0] == 0 && view3Client->isVisible()) {
+				view3Client->setVisible(false);
+				view4Game->setVisible(true);
+				gameInfo->setText("You are player " + *net->getPlayerID());
+				return;
+			}
+
+			// All other messages we send are with network serializer, so we must
+			// now deserialize it on the other end.
+			deserializer.receive(msg);
+			// read() returns a variant (Ocaml style) with all possible value types.
+			// You can pattern match on the variant if you want, or if you know what
+			// you wrote, you can use std::get<>() to extract the value directly.
+			auto jsonMsg = std::get<std::shared_ptr<JsonValue>>(deserializer.read());
+			uint8_t player = static_cast<uint8_t>(jsonMsg->getDouble("player"));
+			double amount = jsonMsg->getDouble("amount");
+			playerScores[player] = amount;
+		});
+	}
 }
 
 /**
