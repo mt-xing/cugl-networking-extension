@@ -86,6 +86,7 @@ void HelloApp::onStartup() {
 	Input::activate<Mouse>();
 	Input::activate<Keyboard>();
 #endif
+	Input::activate<TextInput>();
 
 	// Build the scene from these assets
 	buildScene();
@@ -127,6 +128,7 @@ void HelloApp::onShutdown() {
 	Input::deactivate<Mouse>();
 	Input::deactivate<Keyboard>();
 #endif
+	Input::deactivate<TextInput>();
 	Application::onShutdown();
 }
 
@@ -172,7 +174,7 @@ void HelloApp::buildScene() {
 			// Or you can choose to use NetworkSerializer as shown down in update()
 			net->send({ 0 });
 			net->startGame();
-			gameInfo->setText("You are player " + *net->getPlayerID());
+			gameInfo->setText("You are player " + static_cast<int>(*net->getPlayerID()));
 		}
 		});
 	hostStartBtn->activate();
@@ -184,6 +186,7 @@ void HelloApp::buildScene() {
 	view3Client->addChild(clientInfo);
 	clientInput = scene2::TextField::alloc("00000", font);
 	clientInput->setPosition(100, 200);
+	clientInput->activate();
 	view3Client->addChild(clientInput);
 	auto clientStartBtn = scene2::Button::alloc(scene2::Label::alloc("Join", font));
 	clientStartBtn->setPosition(100, 100);
@@ -288,21 +291,22 @@ void HelloApp::update(float timestep) {
 				disp << "Room ID: ";
 				disp << net->getRoomID();
 				disp << " # of Players: ";
-				disp << net->getNumPlayers();
+				disp << static_cast<int>(net->getNumPlayers());
 				hostInfo->setText(disp.str());
 			}
 			else if (view3Client->isVisible()) {
 				std::ostringstream disp;
 				disp << "Connected to ";
-				disp << net->getNumPlayers();
+				disp << static_cast<int>(net->getNumPlayers());
 				disp << " players";
 				clientInfo->setText(disp.str());
+				clientInput->deactivate();
 			}
 			else if (view4Game->isVisible()) {
 				for (uint8_t i = 0; i < NUM_PLAYERS; i++) {
 					std::ostringstream disp;
 					disp << "Player ";
-					disp << i;
+					disp << static_cast<int>(i);
 					disp << " clicked ";
 					disp << playerScores[i];
 					disp << " times";
@@ -343,7 +347,7 @@ void HelloApp::update(float timestep) {
 			if (msg.size() == 1 && msg[0] == 0 && view3Client->isVisible()) {
 				view3Client->setVisible(false);
 				view4Game->setVisible(true);
-				gameInfo->setText("You are player " + *net->getPlayerID());
+				gameInfo->setText("You are player " + static_cast<int>(*net->getPlayerID()));
 				return;
 			}
 
