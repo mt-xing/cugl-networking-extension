@@ -1,8 +1,20 @@
 //
-//  CUNetworkConnection.h
+// CUNetworkConnection.h
 //
-//  Author: Michael Xing
-//  Version: 5/25/2021
+// Author: Michael Xing
+// Version: 5/25/2021
+// 
+// With help from onewordstudios:
+// - Demi Chang
+// - Aashna Saxena
+// - Sam Sorenson
+// - Michael Xing
+// - Jeffrey Yao
+// - Wendy Zhang
+// https://onewordstudios.com/
+// 
+// With thanks to the students of CS 4152 Spring 2021
+// for beta testing this class.
 //
 #ifndef CU_NETWORK_CONNECTION_H
 #define CU_NETWORK_CONNECTION_H
