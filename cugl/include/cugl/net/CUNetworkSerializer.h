@@ -1,3 +1,9 @@
+//
+// CUNetworkSerializer.h
+//
+// Author: Michael Xing
+// Version: 5/25/2021
+//
 #ifndef CU_NETWORK_SERIALIZER_H
 #define CU_NETWORK_SERIALIZER_H
 
