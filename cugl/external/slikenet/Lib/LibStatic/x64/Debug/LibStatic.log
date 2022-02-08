@@ -1,4 +1,5 @@
 ﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+cl : command line warning D9030: '/Gm' is incompatible with multiprocessing; ignoring /MP switch
   WSAStartupSingleton.cpp
   VitaIncludes.cpp
   VariadicSQLParser.cpp
@@ -126,4 +127,4 @@
   factory.cpp
   cryptomanager.cpp
   Generating Code...
-  LibStatic.vcxproj -> C:\Users\mt_xi\Documents\School\research\HelloWorld\build-win10\Lib\SLikeNet_LibStatic_Debug_x64.lib
+  LibStatic.vcxproj -> C:\Users\mt_xi\Documents\School\cs4152\cugl-networking-extension\build-win10\Lib\SLikeNet_LibStatic_Debug_x64.lib
