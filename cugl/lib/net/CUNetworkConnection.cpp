@@ -351,6 +351,14 @@ void NetworkConnection::broadcast(const std::vector<uint8_t>& msg, SLNet::System
 
 void NetworkConnection::send(const std::vector<uint8_t>& msg) { send(msg, Standard); }
 
+void cugl::NetworkConnection::sendOnlyToHost(const std::vector<uint8_t>& msg) {
+	std::visit(make_visitor(
+		[&](HostPeers& /*h*/) {},
+		[&](ClientPeer& c) {
+			send(msg, DirectToHost);
+		}), remotePeer);
+}
+
 void NetworkConnection::send(const std::vector<uint8_t>& msg, CustomDataPackets packetType) {
 	SLNet::BitStream bs;
 	bs.Write(static_cast<uint8_t>(ID_USER_PACKET_ENUM + packetType));
@@ -550,6 +558,19 @@ void NetworkConnection::receive(
 			std::visit(make_visitor(
 				[&](HostPeers& /*h*/) { broadcast(msgConverted, packet->systemAddress); },
 				[&](ClientPeer& c) {}), remotePeer);
+
+			break;
+		}
+		case ID_USER_PACKET_ENUM + DirectToHost: {
+			auto msgConverted = readBs(bts);
+
+			std::visit(make_visitor(
+				[&](HostPeers& /*h*/) {
+					dispatcher(msgConverted);
+				},
+				[&](ClientPeer& c) {
+					CULogError("Received direct to host message as client");
+				}), remotePeer);
 
 			break;
 		}

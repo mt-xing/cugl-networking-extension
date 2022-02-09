@@ -53,8 +53,12 @@ namespace cugl {
 	 * other players connected to the ad-hoc server. However, any messages sent are relayed
 	 * by the host to all other players too, so the interface appears peer-to-peer.
 	 * 
-	 * You can use this as a true client-server by just checking the player ID. Player ID 0
-	 * is the host, and all others are clients connected to the host.
+	 * You can instead choose to use this as a true client-server by just checking the player ID.
+	 * Player ID 0 is the host, and all others are clients connected to the host. Calling send()
+	 * from the host works as usual; as a client, you may use sendDirectToHost() in lieu of send()
+	 * to send a message to only the host that will not be broadcast to other players. Both the host
+	 * and clients receive messages via receive() as usual. Note that the host does not know if a
+	 * message was sent via send() or sendDirectToHost() on the receiving end.
 	 * 
 	 * This class does support automatic reconnections, but does NOT support host migration.
 	 * If the host drops offline, the connection is closed.
@@ -139,6 +143,22 @@ namespace cugl {
 		 * @param msg The byte array to send.
 		 */
 		void send(const std::vector<uint8_t>& msg);
+
+		/**
+		 * Sends a byte array to the host only.
+		 * 
+		 * Only useful when called from a client (player ID != 0). As host, this is a no-op.
+		 *
+		 * Within a few frames, the host should receive this via a call to receive().
+		 *
+		 * This requires a connection be established. Otherwise its behavior is undefined.
+		 *
+		 * You may choose to either send a byte array directly, or you can use the NetworkSerializer
+		 * and NetworkDeserializer classes to encode more complex data.
+		 *
+		 * @param msg The byte array to send.
+		 */
+		void sendOnlyToHost(const std::vector<uint8_t>& msg);
 
 		/**
 		 * Method to call every network frame to process incoming network messages.
@@ -298,6 +318,7 @@ namespace cugl {
 
 		enum CustomDataPackets {
 			Standard = 0,
+			DirectToHost,
 			AssignedRoom,
 			// Request to join, or success
 			JoinRoom,
