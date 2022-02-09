@@ -55,10 +55,10 @@ namespace cugl {
 	 * 
 	 * You can instead choose to use this as a true client-server by just checking the player ID.
 	 * Player ID 0 is the host, and all others are clients connected to the host. Calling send()
-	 * from the host works as usual; as a client, you may use sendDirectToHost() in lieu of send()
+	 * from the host works as usual; as a client, you may use sendOnlyToHost() in lieu of send()
 	 * to send a message to only the host that will not be broadcast to other players. Both the host
 	 * and clients receive messages via receive() as usual. Note that the host does not know if a
-	 * message was sent via send() or sendDirectToHost() on the receiving end.
+	 * message was sent via send() or sendOnlyToHost() on the receiving end.
 	 * 
 	 * This class does support automatic reconnections, but does NOT support host migration.
 	 * If the host drops offline, the connection is closed.
