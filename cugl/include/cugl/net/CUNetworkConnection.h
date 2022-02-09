@@ -2,7 +2,7 @@
 // CUNetworkConnection.h
 //
 // Author: Michael Xing
-// Version: 5/25/2021
+// Version: 2/8/2022
 // 
 // With help from onewordstudios:
 // - Demi Chang
