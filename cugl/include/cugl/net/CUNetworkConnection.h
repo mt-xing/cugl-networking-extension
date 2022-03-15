@@ -318,7 +318,6 @@ namespace cugl {
 
 		enum CustomDataPackets {
 			Standard = 0,
-			DirectToHost,
 			AssignedRoom,
 			// Request to join, or success
 			JoinRoom,
@@ -327,7 +326,8 @@ namespace cugl {
 			Reconnect,
 			PlayerJoined,
 			PlayerLeft,
-			StartGame
+			StartGame,
+			DirectToHost
 		};
 
 #pragma region Connection Handshake
